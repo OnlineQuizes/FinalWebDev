@@ -1,0 +1,2372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Development Final Exam</title>
+    <style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+
+    body {
+        background-color: #f8fafc;
+        background-image: 
+            linear-gradient(to right, rgba(42, 103, 111, 0.03) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(42, 103, 111, 0.03) 1px, transparent 1px),
+            url("data:image/svg+xml,%3Csvg width='52' height='26' viewBox='0 0 52 26' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%232a676f' fill-opacity='0.05'%3E%3Cpath d='M10 10c0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6h2c0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4v2c-3.314 0-6-2.686-6-6 0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6zm25.464-1.95l8.486 8.486-1.414 1.414-8.486-8.486 1.414-1.414z' /%3E%3C/g%3E%3C/svg%3E");
+        background-size: 
+            40px 40px,
+            40px 40px,
+            52px 26px;
+    }
+
+    .quiz-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 1.5rem;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        border: 1px solid rgba(224, 224, 224, 0.5);
+        backdrop-filter: blur(2px);
+    }
+
+    .quiz-header {
+        text-align: center;
+        font-size: 2.2rem;
+        font-weight: 600;
+        margin-bottom: 2rem;
+        color: white;
+        padding: 1.5rem;
+        background-color: #2a676f;
+        border-radius: 8px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .quiz-header::after {
+        content: '</>';
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        opacity: 0.15;
+        font-size: 3rem;
+        font-family: monospace;
+        font-weight: 700;
+    }
+
+    .controls {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.8rem 2rem;
+        background-color: #2a676f;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 1rem;
+        cursor: pointer;
+        margin: 0.5rem;
+        transition: all 0.3s ease;
+        gap: 8px;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        background-color: #a98a50;
+        box-shadow: 0 2px 8px rgba(42, 103, 111, 0.3);
+    }
+
+    .question {
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        background: #ffffff;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: visible;
+    }
+
+    .question::before {
+        content: '✧';
+        position: absolute;
+        left: -22px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #2a676f;
+        font-size: 1.8rem;
+        opacity: 0.8;
+        z-index: 1;
+        transition: all 0.3s ease;
+        pointer-events: none;
+    }
+
+    .question:hover {
+        transform: translateX(8px);
+        border-color: #2a676f;
+        box-shadow: 4px 4px 12px rgba(42, 103, 111, 0.1);
+    }
+
+    .question:hover::before {
+        color: #a98a50;
+        transform: translateY(-50%) rotate(45deg) scale(1.2);
+        left: -24px;
+    }
+
+    .options label {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        margin: 0.8rem 0;
+        background: #f8fafc;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        gap: 10px;
+        border: 2px solid transparent !important;
+        position: relative;
+        z-index: 2;
+    }
+
+    .options label:hover {
+        background: #e2e8f0;
+        transform: scale(1.02);
+    }
+
+    .options input[type="radio"] {
+        margin-left: 1rem;
+        transform: scale(1.2);
+        accent-color: #2a676f;
+        cursor: pointer;
+    }
+
+    .answer-box {
+        margin-top: 1rem;
+        padding: 1.2rem;
+        border-radius: 8px;
+        display: none;
+        animation: fadeIn 0.3s ease;
+        font-weight: 500;
+        letter-spacing: 0.3px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .correct {
+        background-color: #d4edda;
+        border: 2px solid #c3e6cb;
+        color: #155724;
+    }
+
+    .incorrect {
+        background-color: #f8d7da;
+        border: 2px solid #f5c6cb;
+        color: #721c24;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 600px) {
+        .btn {
+            width: 100%;
+            margin: 0.5rem 0;
+        }
+        
+        .quiz-header {
+            font-size: 1.8rem;
+            padding: 1rem;
+        }
+        
+        .question::before {
+            display: none;
+        }
+    }
+</style>
+
+
+
+</head>
+<body>
+    <div class="quiz-container">
+        <div class="quiz-header">
+            Web Development Final Exam
+        </div>
+        <div class="controls">
+            <button class="btn" onclick="resetQuiz()"> Reset</button>
+            <button class="btn" onclick="showAllAnswers()"> Show Answers</button>
+            <button class="btn" onclick="hideAllAnswers()"> Hide Answers</button>
+        </div>
+
+	<div class="question">
+    <h3>1. Markup languages provide directions to browsers on how to display and manage web documents.</h3>
+    <div class="options">
+        <label><input type="radio" name="q1" value="a"> a) True</label>
+        <label><input type="radio" name="q1" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer1" data-correct-answer="a">Correct Answer: a) True</div>
+</div>
+
+<div class="question">
+    <h3>2. Tags in markup languages are used for tasks such as formatting text and referencing hyperlinks.</h3>
+    <div class="options">
+        <label><input type="radio" name="q2" value="a"> a) True</label>
+        <label><input type="radio" name="q2" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer2" data-correct-answer="a">Correct Answer: a) True</div>
+</div>
+
+<div class="question">
+    <h3>3. The World Wide Web is primarily composed of files written in SQL and JSON.</h3>
+    <div class="options">
+        <label><input type="radio" name="q3" value="a"> a) True</label>
+        <label><input type="radio" name="q3" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer3" data-correct-answer="b|The web uses HTML, not SQL or JSON">Correct Answer: b) False
+</div></div>
+
+<div class="question">
+    <h3>4. HTML stands for __________</h3>
+    <div class="options">
+        <label><input type="radio" name="q4" value="a"> a) HyperText Markup Language</label>
+        <label><input type="radio" name="q4" value="b"> b) HyperText Machine Language</label>
+        <label><input type="radio" name="q4" value="c"> c) HyperText Message Language</label>
+        <label><input type="radio" name="q4" value="d"> d) HighText Marking Language</label>
+    </div>
+    <div class="answer-box" id="answer4" data-correct-answer="a">Correct Answer: a) HyperText Markup Language</div>
+</div>
+
+<div class="question">
+    <h3>5. Special tags in HTML, like &lt;br&gt; and &lt;img&gt;, do not require a closing tag.</h3>
+    <div class="options">
+        <label><input type="radio" name="q5" value="a"> a) True</label>
+        <label><input type="radio" name="q5" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer5" data-correct-answer="a|Also called stand-alone or void tag">Correct Answer: a) True</div>
+</div>
+
+<div class="question">
+    <h3>6. Most elements are coded with an opening tag and a closing tag.</h3>
+    <div class="options">
+        <label><input type="radio" name="q6" value="a"> a) True</label>
+        <label><input type="radio" name="q6" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer6" data-correct-answer="a">Correct Answer: a) True</div>
+</div>
+
+<div class="question">
+    <h3>7. What is the correct syntax of doctype in HTML5?</h3>
+    <div class="options">
+        <label><input type="radio" name="q7" value="a"> a) &lt;/DOCTYPE html&gt;</label>
+        <label><input type="radio" name="q7" value="b"> b) &lt;DOCTYPE html&gt;</label>
+        <label><input type="radio" name="q7" value="c"> c) &lt;DOCTYPE html!&gt;</label>
+        <label><input type="radio" name="q7" value="d"> d) &lt;!DOCTYPE html&gt;</label>
+    </div>
+    <div class="answer-box" id="answer7" data-correct-answer="d">Correct Answer: d) &lt;!DOCTYPE html&gt;</div>
+</div>
+
+<div class="question">
+    <h3>8. Which of the following represents the two main sections of a web page?</h3>
+    <div class="options">
+        <label><input type="radio" name="q8" value="a"> a) Header and Footer</label>
+        <label><input type="radio" name="q8" value="b"> b) Head and Body</label>
+        <label><input type="radio" name="q8" value="c"> c) Title and Content</label>
+        <label><input type="radio" name="q8" value="d"> d) Navigation and Sidebar</label>
+    </div>
+    <div class="answer-box" id="answer8" data-correct-answer="b">Correct Answer: b) Head and Body</div>
+</div>
+
+<div class="question">
+    <h3>9. The head section contains metadata and information about the web page.</h3>
+    <div class="options">
+        <label><input type="radio" name="q9" value="a"> a) True</label>
+        <label><input type="radio" name="q9" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer9" data-correct-answer="a">Correct Answer: a) True</div>
+</div>
+
+<div class="question">
+    <h3>10. The body section contains the visible content (text, images, etc.) displayed on the web page.</h3>
+    <div class="options">
+        <label><input type="radio" name="q10" value="a"> a) True</label>
+        <label><input type="radio" name="q10" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer10" data-correct-answer="a">Correct Answer: a) True</div>
+</div>
+
+<div class="question">
+    <h3>11. Which two elements are typically included in the head section of an HTML document?</h3>
+    <div class="options">
+        <label><input type="radio" name="q11" value="a"> a) &lt;header&gt; and &lt;footer&gt;</label>
+        <label><input type="radio" name="q11" value="b"> b) &lt;title&gt; and &lt;meta&gt;</label>
+        <label><input type="radio" name="q11" value="c"> c) &lt;h1&gt; and &lt;p&gt;</label>
+        <label><input type="radio" name="q11" value="d"> d) &lt;script&gt; and &lt;link&gt;</label>
+    </div>
+    <div class="answer-box" id="answer11" data-correct-answer="b">Correct Answer: b) &lt;title&gt; and &lt;meta&gt;</div>
+</div>
+
+<div class="question">
+    <h3>12. Which of the following is used to read an HTML page and render it?</h3>
+    <div class="options">
+        <label><input type="radio" name="q12" value="a"> a) Web server</label>
+        <label><input type="radio" name="q12" value="b"> b) Web network</label>
+        <label><input type="radio" name="q12" value="c"> c) Web browser</label>
+        <label><input type="radio" name="q12" value="d"> d) Web matrix</label>
+    </div>
+    <div class="answer-box" id="answer12" data-correct-answer="c">Correct Answer: c) Web browser</div>
+</div>
+
+<div class="question">
+    <h3>13. Which of the following tags is used for inserting the largest heading in HTML?</h3>
+    <div class="options">
+        <label><input type="radio" name="q13" value="a"> a) &lt;head&gt;</label>
+        <label><input type="radio" name="q13" value="b"> b) &lt;h1&gt;</label>
+        <label><input type="radio" name="q13" value="c"> c) &lt;h6&gt;</label>
+        <label><input type="radio" name="q13" value="d"> d) &lt;heading&gt;</label>
+    </div>
+    <div class="answer-box" id="answer13" data-correct-answer="b">Correct Answer: b) &lt;h1&gt;</div>
+</div>
+
+<div class="question">
+    <h3>14. In which part of the HTML document is metadata contained?</h3>
+    <div class="options">
+        <label><input type="radio" name="q14" value="a"> a) &lt;head&gt; tag</label>
+        <label><input type="radio" name="q14" value="b"> b) &lt;title&gt; tag</label>
+        <label><input type="radio" name="q14" value="c"> c) &lt;html&gt; tag</label>
+        <label><input type="radio" name="q14" value="d"> d) &lt;body&gt; tag</label>
+    </div>
+    <div class="answer-box" id="answer14" data-correct-answer="a">Correct Answer: a) &lt;head&gt; tag</div>
+</div>
+
+<div class="question">
+    <h3>15. Which element is used to get highlighted text in HTML5?</h3>
+    <div class="options">
+        <label><input type="radio" name="q15" value="a"> a) &lt;u&gt;</label>
+        <label><input type="radio" name="q15" value="b"> b) &lt;mark&gt;</label>
+        <label><input type="radio" name="q15" value="c"> c) &lt;highlight&gt;</label>
+        <label><input type="radio" name="q15" value="d"> d) &lt;b&gt;</label>
+    </div>
+    <div class="answer-box" id="answer15" data-correct-answer="b">Correct Answer: b) &lt;mark&gt;</div>
+</div>
+
+<div class="question">
+    <h3>16. Each phrase element is a container element, so an opening and a closing tag are not required.</h3>
+    <div class="options">
+        <label><input type="radio" name="q16" value="a"> a) True</label>
+        <label><input type="radio" name="q16" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer16" data-correct-answer="b|an opening and a closing tag must be used.">Correct Answer: b) False</div>
+</div>
+
+<div class="question">
+    <h3>17. Which HTML tag is used for making character appearance bold?</h3>
+    <div class="options">
+        <label><input type="radio" name="q17" value="a"> a) &lt;u&gt;content&lt;/u&gt;</label>
+        <label><input type="radio" name="q17" value="b"> b) &lt;b&gt;content&lt;/b&gt;</label>
+        <label><input type="radio" name="q17" value="c"> c) &lt;br&gt;content&lt;/br&gt;</label>
+        <label><input type="radio" name="q17" value="d"> d) &lt;i&gt;content&lt;/i&gt;</label>
+    </div>
+    <div class="answer-box" id="answer17" data-correct-answer="b">Correct Answer: b) &lt;b&gt;content&lt;/b&gt;</div>
+</div>
+
+<div class="question">
+    <h3>18. Which character is used to represent when a tag is closed in HTML?</h3>
+    <div class="options">
+        <label><input type="radio" name="q18" value="a"> a) #</label>
+        <label><input type="radio" name="q18" value="b"> b) !</label>
+        <label><input type="radio" name="q18" value="c"> c) /</label>
+        <label><input type="radio" name="q18" value="d"> d) \</label>
+    </div>
+    <div class="answer-box" id="answer18" data-correct-answer="c">Correct Answer: c) /</div>
+</div>
+
+<div class="question">
+    <h3>19. Among the following, which is the HTML paragraph tag?</h3>
+    <div class="options">
+        <label><input type="radio" name="q19" value="a"> a) &lt;p&gt;</label>
+        <label><input type="radio" name="q19" value="b"> b) &lt;pre&gt;</label>
+        <label><input type="radio" name="q19" value="c"> c) &lt;hr&gt;</label>
+        <label><input type="radio" name="q19" value="d"> d) &lt;a&gt;</label>
+    </div>
+    <div class="answer-box" id="answer19" data-correct-answer="a">Correct Answer: a) &lt;p&gt;</div>
+</div>
+
+<div class="question">
+    <h3>20. Which of the following HTML tags is used to create an unordered list?</h3>
+    <div class="options">
+        <label><input type="radio" name="q20" value="a"> a) &lt;ol&gt;</label>
+        <label><input type="radio" name="q20" value="b"> b) &lt;ul&gt;</label>
+        <label><input type="radio" name="q20" value="c"> c) &lt;li&gt;</label>
+        <label><input type="radio" name="q20" value="d"> d) &lt;ll&gt;</label>
+    </div>
+    <div class="answer-box" id="answer20" data-correct-answer="b">Correct Answer: b) &lt;ul&gt;</div>
+</div>
+
+<div class="question">
+    <h3>21. Which tag is used to create a numbered list in HTML?</h3>
+    <div class="options">
+        <label><input type="radio" name="q21" value="a"> a) &lt;ol&gt;</label>
+        <label><input type="radio" name="q21" value="b"> b) &lt;ul&gt;</label>
+        <label><input type="radio" name="q21" value="c"> c) &lt;li&gt;</label>
+        <label><input type="radio" name="q21" value="d"> d) &lt;ll&gt;</label>
+    </div>
+    <div class="answer-box" id="answer21" data-correct-answer="a">Correct Answer: a) &lt;ol&gt;</div>
+</div>
+
+<div class="question">
+    <h3>22. Which HTML tag is used to convert the plain text into italic format?</h3>
+    <div class="options">
+        <label><input type="radio" name="q22" value="a"> a) &lt;b&gt;</label>
+        <label><input type="radio" name="q22" value="b"> b) &lt;p&gt;</label>
+        <label><input type="radio" name="q22" value="c"> c) &lt;i&gt;</label>
+        <label><input type="radio" name="q22" value="d"> d) &lt;a&gt;</label>
+    </div>
+    <div class="answer-box" id="answer22" data-correct-answer="c">Correct Answer: c) &lt;i&gt;</div>
+</div>
+
+<div class="question">
+    <h3>23. Which works similar to &lt;b&gt; element?</h3>
+    <div class="options">
+        <label><input type="radio" name="q23" value="a"> a) &lt;blockquote&gt;</label>
+        <label><input type="radio" name="q23" value="b"> b) &lt;strong&gt;</label>
+        <label><input type="radio" name="q23" value="c"> c) &lt;em&gt;</label>
+        <label><input type="radio" name="q23" value="d"> d) &lt;i&gt;</label>
+    </div>
+    <div class="answer-box" id="answer23" data-correct-answer="b">Correct Answer: b) &lt;strong&gt;</div>
+</div>
+
+<div class="question">
+    <h3>24. What does the &lt;br&gt; element do in an HTML document?</h3>
+    <div class="options">
+        <label><input type="radio" name="q24" value="a"> a) Delete line</label>
+        <label><input type="radio" name="q24" value="b"> b) Bold text</label>
+        <label><input type="radio" name="q24" value="c"> c) Line break</label>
+        <label><input type="radio" name="q24" value="d"> d) Insert an image</label>
+    </div>
+    <div class="answer-box" id="answer24" data-correct-answer="c">Correct Answer: c) Line break</div>
+</div>
+
+<div class="question">
+    <h3>25. The Document Type Definition (DTD) identifies the version of HTML contained in your document.</h3>
+    <div class="options">
+        <label><input type="radio" name="q25" value="a"> a) True</label>
+        <label><input type="radio" name="q25" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer25" data-correct-answer="a">Correct Answer: a) True</div>
+</div>
+
+<div class="question">
+    <h3>26. DTD must be placed at the bottom of the document.</h3>
+    <div class="options">
+        <label><input type="radio" name="q26" value="a"> a) True</label>
+        <label><input type="radio" name="q26" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer26" data-correct-answer="b|Must be placed at the top of a web page document">Correct Answer: b) False</div>
+</div>
+
+<div class="question">
+    <h3>27. The DTD statement has its own format, and HTML tags, like &lt;p&gt;, are written in lowercase.</h3>
+    <div class="options">
+        <label><input type="radio" name="q27" value="a"> a) True</label>
+        <label><input type="radio" name="q27" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer27" data-correct-answer="a">Correct Answer: a) True</div>
+</div>
+
+<div class="question">
+    <h3>28. Which HTML element tells the browser how to interpret the document?</h3>
+    <div class="options">
+        <label><input type="radio" name="q28" value="a"> a) &lt;body&gt;</label>
+        <label><input type="radio" name="q28" value="b"> b) &lt;html&gt;</label>
+        <label><input type="radio" name="q28" value="c"> c) &lt;head&gt;</label>
+        <label><input type="radio" name="q28" value="d"> d) &lt;meta&gt;</label>
+    </div>
+    <div class="answer-box" id="answer28" data-correct-answer="b">Correct Answer: b) &lt;html&gt;</div>
+</div>
+
+<div class="question">
+    <h3>29. The opening tag is placed on the same line as the DTD.</h3>
+    <div class="options">
+        <label><input type="radio" name="q29" value="a"> a) True</label>
+        <label><input type="radio" name="q29" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer29" data-correct-answer="b|The opening tag is placed on a line below the DTD.">Correct Answer: b) False</div>
+</div>
+
+<div class="question">
+    <h3>30. What is NOT true about the &lt;meta&gt; tag?</h3>
+    <div class="options">
+        <label><input type="radio" name="q30" value="a"> a) It defines metadata.</label>
+        <label><input type="radio" name="q30" value="b"> b) It has an opening and closing tag.</label>
+        <label><input type="radio" name="q30" value="c"> c) It uses the charset attribute for encoding.</label>
+        <label><input type="radio" name="q30" value="d"> d) It doesn’t show on the page.</label>
+    </div>
+    <div class="answer-box" id="answer30" data-correct-answer="b">Correct Answer: b) It has an opening and closing tag.</div>
+</div>
+
+<div class="question">
+    <h3>31. Which element is used to indent a block of text for special emphasis?</h3>
+    <div class="options">
+        <label><input type="radio" name="q31" value="a"> a) &lt;p&gt;</label>
+        <label><input type="radio" name="q31" value="b"> b) &lt;div&gt;</label>
+        <label><input type="radio" name="q31" value="c"> c) &lt;blockquote&gt;</label>
+        <label><input type="radio" name="q31" value="d"> d) &lt;em&gt;</label>
+    </div>
+    <div class="answer-box" id="answer31" data-correct-answer="c">Correct Answer: c) &lt;blockquote&gt;</div>
+</div>
+
+<div class="question">
+    <h3>32. What is the correct sequence for opening and closing tags?</h3>
+    <div class="options">
+        <label><input type="radio" name="q32" value="a"> a) &lt;p&gt;&lt;i&gt;content&lt;/p&gt;&lt;/i&gt;</label>
+        <label><input type="radio" name="q32" value="b"> b) &lt;i&gt;&lt;p&gt;content&lt;/i&gt;&lt;p&gt;</label>
+        <label><input type="radio" name="q32" value="c"> c) &lt;p&gt;&lt;i&gt;content&lt;/i&gt;&lt;/p&gt;</label>
+        <label><input type="radio" name="q32" value="d"> d) All of the above</label>
+    </div>
+    <div class="answer-box" id="answer32" data-correct-answer="c">Correct Answer: c) &lt;p&gt;&lt;i&gt;content&lt;/i&gt;&lt;/p&gt;</div>
+</div>
+
+<div class="question">
+    <h3>33. A description list is useful to display a list of terms and descriptions, such as a FAQ and answers.</h3>
+    <div class="options">
+        <label><input type="radio" name="q33" value="a"> a) True</label>
+        <label><input type="radio" name="q33" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer33" data-correct-answer="a">Correct Answer: a) True</div>
+</div>
+
+<div class="question">
+    <h3>34. There should be only one main element per web page.</h3>
+    <div class="options">
+        <label><input type="radio" name="q34" value="a"> a) True</label>
+        <label><input type="radio" name="q34" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer34" data-correct-answer="a">Correct Answer: a) True</div>
+</div>
+
+<div class="question">
+    <h3>35. How do you insert a hyperlink in an HTML page?</h3>
+    <div class="options">
+        <label><input type="radio" name="q35" value="a"> a) &lt;link href="contact.html"&gt;Contact us&lt;/link&gt;</label>
+        <label><input type="radio" name="q35" value="b"> b) &lt;a href="contact.html"&gt;Contact us&lt;/a&gt;</label>
+        <label><input type="radio" name="q35" value="c"> c) &lt;hyperlink href="contact.html"&gt;Contact us&lt;/hyperlink&gt;</label>
+        <label><input type="radio" name="q35" value="d"> d) &lt;href link="contact.html"&gt;Contact us&lt;/href&gt;</label>
+    </div>
+    <div class="answer-box" id="answer35" data-correct-answer="b">Correct Answer: b) &lt;a href="contact.html"&gt;Contact us&lt;/a&gt;</div>
+</div>
+
+<div class="question">
+    <h3>36. What is the correct HTML for referring to an external style sheet?</h3>
+    <div class="options">
+        <label><input type="radio" name="q36" value="a"> a) &lt;a rel="stylesheet" href="styles.css"&gt;</label>
+        <label><input type="radio" name="q36" value="b"> b) &lt;link rel="stylesheet" href="styles.css"&gt;</label>
+        <label><input type="radio" name="q36" value="c"> c) &lt;css link="styles.css"&gt;</label>
+        <label><input type="radio" name="q36" value="d"> d) &lt;script href="styles.css"&gt;</label>
+    </div>
+    <div class="answer-box" id="answer36" data-correct-answer="b">Correct Answer: b) &lt;link rel="stylesheet" href="styles.css"&gt;</div>
+</div>
+
+<div class="question">
+    <h3>37. What is an example of an absolute hyperlink?</h3>
+    <div class="options">
+        <label><input type="radio" name="q37" value="a"> a) &lt;a href="about.html"&gt;About Us&lt;/a&gt;</label>
+        <label><input type="radio" name="q37" value="b"> b) &lt;a href="http://www.example.com/contact"&gt;Contact Us&lt;/a&gt;</label>
+        <label><input type="radio" name="q37" value="c"> c) &lt;a href="/images/photo.jpg"&gt;View Photo&lt;/a&gt;</label>
+        <label><input type="radio" name="q37" value="d"> d) &lt;a href="folder/page.html"&gt;Page&lt;/a&gt;</label>
+    </div>
+    <div class="answer-box" id="answer37" data-correct-answer="b">Correct Answer: b) &lt;a href="http://www.example.com/contact"&gt;Contact Us&lt;/a&gt;</div>
+</div>
+
+
+<div class="question">
+    <h3>38. What is an example of a relative hyperlink?</h3>
+    <div class="options">
+        <label><input type="radio" name="q38" value="a"> a) &lt;a href="http://www.example.com/about"&gt;About Us&lt;/a&gt;</label>
+        <label><input type="radio" name="q38" value="b"> b) &lt;a href="contact.html"&gt;Contact Us&lt;/a&gt;</label>
+        <label><input type="radio" name="q38" value="c"> c) &lt;a href="https://www.example.com/page.html"&gt;Page&lt;/a&gt;</label>
+        <label><input type="radio" name="q38" value="d"> d) &lt;a href="http://www.example.com/resources"&gt;Resources&lt;/a&gt;</label>
+    </div>
+    <div class="answer-box" id="answer38" data-correct-answer="b">Correct Answer: b) &lt;a href="contact.html"&gt;Contact Us&lt;/a&gt;</div>
+</div>
+
+<div class="question">
+    <h3>39. Text displayed within a table header element is centered and bold.</h3>
+    <div class="options">
+        <label><input type="radio" name="q39" value="a"> a) True</label>
+        <label><input type="radio" name="q39" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer39" data-correct-answer="a">Correct Answer: a) True</div>
+</div>
+
+<div class="question">
+    <h3>40. What is the purpose of the colspan attribute in an HTML table?</h3>
+    <div class="options">
+        <label><input type="radio" name="q40" value="a"> a) It merges multiple rows into one.</label>
+        <label><input type="radio" name="q40" value="b"> b) It allows a cell to span multiple columns.</label>
+        <label><input type="radio" name="q40" value="c"> c) It specifies the color of table cells.</label>
+        <label><input type="radio" name="q40" value="d"> d) It controls the alignment of table data.</label>
+    </div>
+    <div class="answer-box" id="answer40" data-correct-answer="b">Correct Answer: b) It allows a cell to span multiple columns.</div>
+</div>
+
+<div class="question">
+    <h3>41. What is the purpose of the rowspan attribute in an HTML table?</h3>
+    <div class="options">
+        <label><input type="radio" name="q41" value="a"> a) It merges multiple columns into one.</label>
+        <label><input type="radio" name="q41" value="b"> b) It allows a cell to span multiple rows.</label>
+        <label><input type="radio" name="q41" value="c"> c) It specifies the background color of table cells.</label>
+        <label><input type="radio" name="q41" value="d"> d) It controls the text alignment of table headers.</label>
+    </div>
+    <div class="answer-box" id="answer41" data-correct-answer="b">Correct Answer: b) It allows a cell to span multiple rows.</div>
+</div>
+
+<div class="question">
+    <h3>42. Which of the following is an example of improving table accessibility for screen readers?</h3>
+    <div class="options">
+        <label><input type="radio" name="q42" value="a"> a) &lt;td&gt;John Doe&lt;/td&gt;</label>
+        <label><input type="radio" name="q42" value="b"> b) &lt;th id="date"&gt;Date&lt;/th&gt;</label>
+        <label><input type="radio" name="q42" value="c"> c) &lt;p&gt;Employee Info&lt;/p&gt;</label>
+        <label><input type="radio" name="q42" value="d"> d) &lt;table&gt;Employee Information&lt;/table&gt;</label>
+    </div>
+    <div class="answer-box" id="answer42" data-correct-answer="b">Correct Answer: b) &lt;th id="date"&gt;Date&lt;/th&gt;</div>
+</div>
+
+<div class="question">
+    <h3>43. What does CSS stand for?</h3>
+    <div class="options">
+        <label><input type="radio" name="q43" value="a"> a) Colorful Style Sheets</label>
+        <label><input type="radio" name="q43" value="b"> b) Creative Style Sheets</label>
+        <label><input type="radio" name="q43" value="c"> c) Cascading Style Sheets</label>
+        <label><input type="radio" name="q43" value="d"> d) Computer Style Sheets</label>
+    </div>
+    <div class="answer-box" id="answer43" data-correct-answer="c">Correct Answer: c) Cascading Style Sheets</div>
+</div>
+
+<div class="question">
+    <h3>44. A single CSS file can control the color, typography, and layout of multiple web pages.</h3>
+    <div class="options">
+        <label><input type="radio" name="q44" value="a"> a) True</label>
+        <label><input type="radio" name="q44" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer44" data-correct-answer="a">Correct Answer: a) True</div>
+</div>
+
+<div class="question">
+    <h3>45. Inline styles are coded as an attribute on an HTML tag using the style attribute.</h3>
+    <div class="options">
+        <label><input type="radio" name="q45" value="a"> a) True</label>
+        <label><input type="radio" name="q45" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer45" data-correct-answer="a">Correct Answer: a) True</div>
+</div>
+
+<div class="question">
+    <h3>46. Embedded styles are defined in the &lt;head&gt; section within the &lt;style&gt; tag.</h3>
+    <div class="options">
+        <label><input type="radio" name="q46" value="a"> a) True</label>
+        <label><input type="radio" name="q46" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer46" data-correct-answer="a">Correct Answer: a) True</div>
+</div>
+
+<div class="question">
+    <h3>47. Each rule in CSS contains only a selector.</h3>
+    <div class="options">
+        <label><input type="radio" name="q47" value="a"> a) True</label>
+        <label><input type="radio" name="q47" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer47" data-correct-answer="b|Each Rule contains a Selector and a Declaration">Correct Answer: b) False</div>
+</div>
+
+<div class="question">
+    <h3>48. Which is the correct CSS syntax?</h3>
+    <div class="options">
+        <label><input type="radio" name="q48" value="a"> a) {body:color=black;}</label>
+        <label><input type="radio" name="q48" value="b"> b) {body;color:black;}</label>
+        <label><input type="radio" name="q48" value="c"> c) body {color: black;}</label>
+        <label><input type="radio" name="q48" value="d"> d) body:color=black;</label>
+    </div>
+    <div class="answer-box" id="answer48" data-correct-answer="c">Correct Answer: c) body {color: black;}</div>
+</div>
+
+<div class="question">
+    <h3>49. Which is the correct order of CSS syntax?</h3>
+    <div class="options">
+        <label><input type="radio" name="q49" value="a"> a) Property, Value, Selector</label>
+        <label><input type="radio" name="q49" value="b"> b) Selector, Value, Property</label>
+        <label><input type="radio" name="q49" value="c"> c) Selector, Property, Value</label>
+        <label><input type="radio" name="q49" value="d"> d) Value, Selector, Property</label>
+    </div>
+    <div class="answer-box" id="answer49" data-correct-answer="c">Correct Answer: c) Selector, Property, Value</div>
+</div>
+
+<div class="question">
+    <h3>50. The CSS style rule selector can be an HTML element name, a class name, or an ID name.</h3>
+    <div class="options">
+        <label><input type="radio" name="q50" value="a"> a) True</label>
+        <label><input type="radio" name="q50" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer50" data-correct-answer="a">Correct Answer: a) True</div>
+</div>
+
+<div class="question">
+    <h3>51. A semicolon (;) is used to separate selectors in a CSS rule.</h3>
+    <div class="options">
+        <label><input type="radio" name="q51" value="a"> a) True</label>
+        <label><input type="radio" name="q51" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer51" data-correct-answer="b|A semicolon (;) is used to separate declarations in a CSS rule">Correct Answer: b) False</div>
+</div>
+
+<div class="question">
+    <h3>52. In inline styles, we must use a selector.</h3>
+    <div class="options">
+        <label><input type="radio" name="q52" value="a"> a) True</label>
+        <label><input type="radio" name="q52" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer52" data-correct-answer="b|Inline styles are added directly to the HTML element, no selector needed.">Correct Answer: b) False</div>
+</div>
+
+<div class="question">
+    <h3>53. The body selector sets the style rules only for headings on the page.</h3>
+    <div class="options">
+        <label><input type="radio" name="q53" value="a"> a) True</label>
+        <label><input type="radio" name="q53" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer53" data-correct-answer="b|The body selector sets the global style rules for the entire page">Correct Answer: b) False</div>
+</div>
+
+<div class="question">
+    <h3>54. What is the correct syntax for a class selector?</h3>
+    <div class="options">
+        <label><input type="radio" name="q54" value="a"> a) #className {}</label>
+        <label><input type="radio" name="q54" value="b"> b) .className {}</label>
+        <label><input type="radio" name="q54" value="c"> c) className {}</label>
+        <label><input type="radio" name="q54" value="d"> d) *className {}</label>
+    </div>
+    <div class="answer-box" id="answer54" data-correct-answer="b">Correct Answer: b) .className {}</div>
+</div>
+
+<div class="question">
+    <h3>55. What is the correct syntax for an ID selector?</h3>
+    <div class="options">
+        <label><input type="radio" name="q55" value="a"> a) #header {}</label>
+        <label><input type="radio" name="q55" value="b"> b) .header {}</label>
+        <label><input type="radio" name="q55" value="c"> c) header {}</label>
+        <label><input type="radio" name="q55" value="d"> d) id(header) {}</label>
+    </div>
+    <div class="answer-box" id="answer55" data-correct-answer="a">Correct Answer: a) #header {}</div>
+</div>
+
+<div class="question">
+    <h3>56. Which selector is used to style a single element on a web page?</h3>
+    <div class="options">
+        <label><input type="radio" name="q56" value="a"> a) Class selector</label>
+        <label><input type="radio" name="q56" value="b"> b) ID selector</label>
+        <label><input type="radio" name="q56" value="c"> c) Descendant selector</label>
+        <label><input type="radio" name="q56" value="d"> d) Element selector</label>
+    </div>
+    <div class="answer-box" id="answer56" data-correct-answer="b">Correct Answer: b) ID selector</div>
+</div>
+
+<div class="question">
+    <h3>57. Which selector is used to style multiple elements on a web page?</h3>
+    <div class="options">
+        <label><input type="radio" name="q57" value="a"> a) ID selector</label>
+        <label><input type="radio" name="q57" value="b"> b) Class selector</label>
+        <label><input type="radio" name="q57" value="c"> c) Element selector</label>
+        <label><input type="radio" name="q57" value="d"> d) Universal selector</label>
+    </div>
+    <div class="answer-box" id="answer57" data-correct-answer="b">Correct Answer: b) Class selector</div>
+</div>
+
+<div class="question">
+    <h3>58. Which selector targets elements nested inside another element?</h3>
+    <div class="options">
+        <label><input type="radio" name="q58" value="a"> a) HTML element selector</label>
+        <label><input type="radio" name="q58" value="b"> b) Class selector</label>
+        <label><input type="radio" name="q58" value="c"> c) ID selector</label>
+        <label><input type="radio" name="q58" value="d"> d) Descendant selector</label>
+    </div>
+    <div class="answer-box" id="answer58" data-correct-answer="d">Correct Answer: d) Descendant selector</div>
+</div>
+
+<div class="question">
+    <h3>59. Which CSS style has the highest priority in the cascade?</h3>
+    <div class="options">
+        <label><input type="radio" name="q59" value="a"> a) External style</label>
+        <label><input type="radio" name="q59" value="b"> b) Embedded style</label>
+        <label><input type="radio" name="q59" value="c"> c) Inline style</label>
+        <label><input type="radio" name="q59" value="d"> d) Browser default style</label>
+    </div>
+    <div class="answer-box" id="answer59" data-correct-answer="c">Correct Answer: c) Inline style</div>
+</div>
+
+<div class="question">
+    <h3>60. Which CSS style has the lowest priority in the cascade?</h3>
+    <div class="options">
+        <label><input type="radio" name="q60" value="a"> a) External style</label>
+        <label><input type="radio" name="q60" value="b"> b) Embedded style</label>
+        <label><input type="radio" name="q60" value="c"> c) Inline style</label>
+        <label><input type="radio" name="q60" value="d"> d) ID selector</label>
+    </div>
+    <div class="answer-box" id="answer60" data-correct-answer="a">Correct Answer: a) External style</div>
+</div>
+
+<div class="question">
+    <h3>61. What HTML tag is used to define a table row?</h3>
+    <div class="options">
+        <label><input type="radio" name="q61" value="a"> a) &lt;td&gt;</label>
+        <label><input type="radio" name="q61" value="b"> b) &lt;tr&gt;</label>
+        <label><input type="radio" name="q61" value="c"> c) &lt;table&gt;</label>
+        <label><input type="radio" name="q61" value="d"> d) &lt;caption&gt;</label>
+    </div>
+    <div class="answer-box" id="answer61" data-correct-answer="b">Correct Answer: b) &lt;tr&gt;</div>
+</div>
+
+<div class="question">
+    <h3>62. Which HTML element is used to provide a description or title for the entire table?</h3>
+    <div class="options">
+        <label><input type="radio" name="q62" value="a"> a) &lt;table&gt;</label>
+        <label><input type="radio" name="q62" value="b"> b) &lt;tr&gt;</label>
+        <label><input type="radio" name="q62" value="c"> c) &lt;td&gt;</label>
+        <label><input type="radio" name="q62" value="d"> d) &lt;caption&gt;</label>
+    </div>
+    <div class="answer-box" id="answer62" data-correct-answer="d">Correct Answer: d) &lt;caption&gt;</div>
+</div>
+
+<div class="question">
+    <h3>63. Which HTML element creates a horizontal line and can indicate a thematic break in content?</h3>
+    <div class="options">
+        <label><input type="radio" name="q63" value="a"> a) &lt;hr&gt;</label>
+        <label><input type="radio" name="q63" value="b"> b) &lt;br&gt;</label>
+        <label><input type="radio" name="q63" value="c"> c) &lt;div&gt;</label>
+        <label><input type="radio" name="q63" value="d"> d) &lt;p&gt;</label>
+    </div>
+    <div class="answer-box" id="answer63" data-correct-answer="a">Correct Answer: a) &lt;hr&gt;</div>
+</div>
+
+<div class="question">
+    <h3>64. The CSS border property is a shorthand property that sets which of the following individual properties?</h3>
+    <div class="options">
+        <label><input type="radio" name="q64" value="a"> a) border-width, border-style, border-color</label>
+        <label><input type="radio" name="q64" value="b"> b) border-size, border-shape, border-radius</label>
+        <label><input type="radio" name="q64" value="c"> c) border-width, border-radius, border-background</label>
+        <label><input type="radio" name="q64" value="d"> d) border-height, border-type, border-color</label>
+    </div>
+    <div class="answer-box" id="answer64" data-correct-answer="a">Correct Answer: a) border-width, border-style, border-color</div>
+</div>
+
+<div class="question">
+    <h3>65. What attribute in the &lt;img&gt; tag specifies an alternate meaningful text for an image?</h3>
+    <div class="options">
+        <label><input type="radio" name="q65" value="a"> a) src</label>
+        <label><input type="radio" name="q65" value="b"> b) alt</label>
+        <label><input type="radio" name="q65" value="c"> c) title</label>
+        <label><input type="radio" name="q65" value="d"> d) coords</label>
+    </div>
+    <div class="answer-box" id="answer65" data-correct-answer="b">Correct Answer: b) alt</div>
+</div>
+
+<div class="question">
+    <h3>66. What does this HTML code do?</h3>
+    <code>&lt;a href="..."&gt;&lt;img src="..."&gt;&lt;/a&gt;</code>
+    <div class="options">
+        <label><input type="radio" name="q66" value="a"> a) Makes the image a link</label>
+        <label><input type="radio" name="q66" value="b"> b) Adds a button</label>
+        <label><input type="radio" name="q66" value="c"> c) Shows clickable text</label>
+        <label><input type="radio" name="q66" value="d"> d) Displays an image only</label>
+    </div>
+    <div class="answer-box" id="answer66" data-correct-answer="a">Correct Answer: a) Makes the image a link</div>
+</div>
+
+<div class="question">
+    <h3>67. What will this HTML code show and do?</h3>
+    <code>&lt;a href="big.jpg"&gt;&lt;img src="small.jpg"&gt;&lt;/a&gt;</code>
+    <div class="options">
+        <label><input type="radio" name="q67" value="a"> a) Shows a small image and links it to a bigger one</label>
+        <label><input type="radio" name="q67" value="b"> b) Shows a big image and links it to another page</label>
+        <label><input type="radio" name="q67" value="c"> c) Displays text linking to an image</label>
+        <label><input type="radio" name="q67" value="d"> d) Shows a small image with no link</label>
+    </div>
+    <div class="answer-box" id="answer67" data-correct-answer="a">Correct Answer: a) Shows a small image and links it to a bigger one</div>
+</div>
+
+<div class="question">
+    <h3>68. Optimizing an image means increasing its size for better quality.</h3>
+    <div class="options">
+        <label><input type="radio" name="q68" value="a"> a) True</label>
+        <label><input type="radio" name="q68" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer68" data-correct-answer="b|Optimizing an image means reducing its size while keeping good quality.">Correct Answer: b) False</div>
+</div>
+
+<div class="question">
+    <h3>69. What should not be included in image file names?</h3>
+    <div class="options">
+        <label><input type="radio" name="q69" value="a"> a) Spaces</label>
+        <label><input type="radio" name="q69" value="b"> b) Lowercase letters</label>
+        <label><input type="radio" name="q69" value="c"> c) Numbers</label>
+        <label><input type="radio" name="q69" value="d"> d) Short descriptions</label>
+    </div>
+    <div class="answer-box" id="answer69" data-correct-answer="a">Correct Answer: a) Spaces</div>
+</div>
+
+<div class="question">
+    <h3>70. Which of the following is a properly named image file?</h3>
+    <div class="options">
+        <label><input type="radio" name="q70" value="a"> a) cat_pic.gif</label>
+        <label><input type="radio" name="q70" value="b"> b) VacationPhoto!.jpeg</label>
+        <label><input type="radio" name="q70" value="c"> c) mybirthdaypartywithfriendsandfamily.jpg</label>
+        <label><input type="radio" name="q70" value="d"> d) summer2024.png</label>
+    </div>
+    <div class="answer-box" id="answer70" data-correct-answer="d">Correct Answer: d) cat_pic.gif</div>
+</div>
+
+<div class="question">
+    <h3>71. How do you display logo.jpg in the shown directory structure?</h3>
+    <div class="options">
+        <label><input type="radio" name="q71" value="a"> a) &lt;img src="logo.jpg"&gt;</label>
+        <label><input type="radio" name="q71" value="b"> b) &lt;img src="images/logo.jpg"&gt;</label>
+        <label><input type="radio" name="q71" value="c"> c) &lt;img src="images/background.jpg"&gt;</label>
+        <label><input type="radio" name="q71" value="d"> d) &lt;img src="services/logo.jpg"&gt;</label>
+    </div>
+    <div class="answer-box" id="answer71" data-correct-answer="b">Correct Answer: b) &lt;img src="images/logo.jpg"&gt;</div>
+</div>
+
+
+<div class="question">
+    <h3>72. Organizing images in a folder helps keep website files structured and easy to manage.</h3>
+    <div class="options">
+        <label><input type="radio" name="q72" value="a"> a) True</label>
+        <label><input type="radio" name="q72" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer72" data-correct-answer="a">Correct Answer: a) True</div>
+</div>
+
+<div class="question">
+    <h3>73. What is the difference between &lt;figure&gt; and &lt;img&gt;?</h3>
+    <div class="options">
+        <label><input type="radio" name="q73" value="a"> a) &lt;img&gt; shows an image, &lt;figure&gt; adds a caption to it.</label>
+        <label><input type="radio" name="q73" value="b"> b) &lt;figure&gt; is for videos, &lt;img&gt; is for images.</label>
+        <label><input type="radio" name="q73" value="c"> c) &lt;img&gt; is for decoration, &lt;figure&gt; is for all images.</label>
+        <label><input type="radio" name="q73" value="d"> d) &lt;figure&gt; resizes images, &lt;img&gt; does not.</label>
+    </div>
+    <div class="answer-box" id="answer73" data-correct-answer="a">Correct Answer: a) &lt;img&gt; shows an image, &lt;figure&gt; adds a caption to it.</div>
+</div>
+
+<div class="question">
+    <h3>74. The &lt;figure&gt; element is used to contain a self-contained content unit, like an image.</h3>
+    <div class="options">
+        <label><input type="radio" name="q74" value="a"> a) True</label>
+        <label><input type="radio" name="q74" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer74" data-correct-answer="a">Correct Answer: a) True</div>
+</div>
+
+<div class="question">
+    <h3>75. What is used to describe the content inside a &lt;figure&gt; element?</h3>
+    <div class="options">
+        <label><input type="radio" name="q75" value="a"> a) &lt;caption&gt;</label>
+        <label><input type="radio" name="q75" value="b"> b) &lt;figcaption&gt;</label>
+        <label><input type="radio" name="q75" value="c"> c) &lt;alt&gt;</label>
+        <label><input type="radio" name="q75" value="d"> d) &lt;description&gt;</label>
+    </div>
+    <div class="answer-box" id="answer75" data-correct-answer="b">Correct Answer: b) &lt;figcaption&gt;</div>
+</div>
+
+<div class="question">
+    <h3>76. What does the &lt;meter&gt; element do?</h3>
+    <div class="options">
+        <label><input type="radio" name="q76" value="a"> a) Shows task progress</label>
+        <label><input type="radio" name="q76" value="b"> b) Displays a static value in a range</label>
+        <label><input type="radio" name="q76" value="c"> c) Adds a background color</label>
+        <label><input type="radio" name="q76" value="d"> d) Shows a countdown</label>
+    </div>
+    <div class="answer-box" id="answer76" data-correct-answer="b">Correct Answer: b) Displays a static value in a range</div>
+</div>
+
+<div class="question">
+    <h3>77. What does the &lt;progress&gt; element do?</h3>
+    <div class="options">
+        <label><input type="radio" name="q77" value="a"> a) Shows task progress dynamically</label>
+        <label><input type="radio" name="q77" value="b"> b) Displays a static value</label>
+        <label><input type="radio" name="q77" value="c"> c) Adds a border</label>
+        <label><input type="radio" name="q77" value="d"> d) Shows an image</label>
+    </div>
+    <div class="answer-box" id="answer77" data-correct-answer="a">Correct Answer: a) Shows task progress dynamically</div>
+</div>
+
+<div class="question">
+    <h3>78. Which value of the background-repeat property is used to stop an image from repeating?</h3>
+    <div class="options">
+        <label><input type="radio" name="q78" value="a"> a) no-repeat</label>
+        <label><input type="radio" name="q78" value="b"> b) repeat</label>
+        <label><input type="radio" name="q78" value="c"> c) repeat-x</label>
+        <label><input type="radio" name="q78" value="d"> d) repeat-y</label>
+    </div>
+    <div class="answer-box" id="answer78" data-correct-answer="a">Correct Answer: a) no-repeat</div>
+</div>
+
+<div class="question">
+    <h3>79. Which property makes text wrap around an image?</h3>
+    <div class="options">
+        <label><input type="radio" name="q79" value="a"> a) align</label>
+        <label><input type="radio" name="q79" value="b"> b) float</label>
+        <label><input type="radio" name="q79" value="c"> c) position</label>
+        <label><input type="radio" name="q79" value="d"> d) display</label>
+    </div>
+    <div class="answer-box" id="answer79" data-correct-answer="b">Correct Answer: b) float</div>
+</div>
+
+<div class="question">
+    <h3>80. Which CSS property determines whether a background image is fixed or scrolls with the page?</h3>
+    <div class="options">
+        <label><input type="radio" name="q80" value="a"> a) background-position</label>
+        <label><input type="radio" name="q80" value="b"> b) background-attachment</label>
+        <label><input type="radio" name="q80" value="c"> c) background-repeat</label>
+        <label><input type="radio" name="q80" value="d"> d) background-image</label>
+    </div>
+    <div class="answer-box" id="answer80" data-correct-answer="b">Correct Answer: b) background-attachment</div>
+</div>
+
+<div class="question">
+    <h3>81. An image map allows multiple clickable areas on an image that link to different pages.</h3>
+    <div class="options">
+        <label><input type="radio" name="q81" value="a"> a) True</label>
+        <label><input type="radio" name="q81" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer81" data-correct-answer="a">Correct Answer: a) True</div>
+</div>
+
+<div class="question">
+    <h3>82. The clickable areas in an image map are called "targets."</h3>
+    <div class="options">
+        <label><input type="radio" name="q82" value="a"> a) True</label>
+        <label><input type="radio" name="q82" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer82" data-correct-answer="b|The clickable areas in an image map are called 'hotspots'">Correct Answer: b) False</div>
+</div>
+
+<div class="question">
+    <h3>83. Which attribute is used to link an image to an image map with id="boat"?</h3>
+    <div class="options">
+        <label><input type="radio" name="q83" value="a"> a) src="boat"</label>
+        <label><input type="radio" name="q83" value="b"> b) map="#boat"</label>
+        <label><input type="radio" name="q83" value="c"> c) usemap="#boat"</label>
+        <label><input type="radio" name="q83" value="d"> d) href="#boat"</label>
+    </div>
+    <div class="answer-box" id="answer83" data-correct-answer="c">Correct Answer: c) usemap="#boat"</div>
+</div>
+
+<div class="question">
+    <h3>84. Favicon images are typically square and named favicon.ico.</h3>
+    <div class="options">
+        <label><input type="radio" name="q84" value="a"> a) True</label>
+        <label><input type="radio" name="q84" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer84" data-correct-answer="a">Correct Answer: a) True</div>
+</div>
+
+<div class="question">
+    <h3>85. What sets a favicon for the webpage?</h3>
+    <div class="options">
+        <label><input type="radio" name="q85" value="a"> a) &lt;link rel="icon" href="favicon.ico"&gt;</label>
+        <label><input type="radio" name="q85" value="b"> b) &lt;img src="favicon.ico"&gt;</label>
+        <label><input type="radio" name="q85" value="c"> c) &lt;link rel="stylesheet" href="favicon.ico"&gt;</label>
+        <label><input type="radio" name="q85" value="d"> d) &lt;meta name="icon" content="favicon.ico"&gt;</label>
+    </div>
+    <div class="answer-box" id="answer85" data-correct-answer="a">Correct Answer: a) &lt;link rel="icon" href="favicon.ico"&gt;</div>
+</div>
+
+<div class="question">
+    <h3>86. What does the border-radius property configure?</h3>
+    <div class="options">
+        <label><input type="radio" name="q86" value="a"> a) Shadow effect on an element</label>
+        <label><input type="radio" name="q86" value="b"> b) Rounded corners</label>
+        <label><input type="radio" name="q86" value="c"> c) Background color</label>
+        <label><input type="radio" name="q86" value="d"> d) Opacity</label>
+    </div>
+    <div class="answer-box" id="answer86" data-correct-answer="b">Correct Answer: b) Rounded corners</div>
+</div>
+
+<div class="question">
+    <h3>87. In the border-radius property, how are the four values ordered?</h3>
+    <div class="options">
+        <label><input type="radio" name="q87" value="a"> a) Top right, top left, bottom left, bottom right</label>
+        <label><input type="radio" name="q87" value="b"> b) Top left, top right, bottom right, bottom left</label>
+        <label><input type="radio" name="q87" value="c"> c) Bottom left, bottom right, top left, top right</label>
+        <label><input type="radio" name="q87" value="d"> d) Bottom right, bottom left, top right, top left</label>
+    </div>
+    <div class="answer-box" id="answer87" data-correct-answer="b">Correct Answer: b) Top left, top right, bottom right, bottom left</div>
+</div>
+
+<div class="question">
+    <h3>88. Which CSS property combines multiple shadow values?</h3>
+    <div class="options">
+        <label><input type="radio" name="q88" value="a"> a) opacity</label>
+        <label><input type="radio" name="q88" value="b"> b) box-shadow</label>
+        <label><input type="radio" name="q88" value="c"> c) border-radius</label>
+        <label><input type="radio" name="q88" value="d"> d) background-image</label>
+    </div>
+    <div class="answer-box" id="answer88" data-correct-answer="b">Correct Answer: b) box-shadow</div>
+</div>
+
+<div class="question">
+    <h3>89. What CSS property sets the transparency of an element?</h3>
+    <div class="options">
+        <label><input type="radio" name="q89" value="a"> a) opacity</label>
+        <label><input type="radio" name="q89" value="b"> b) alpha</label>
+        <label><input type="radio" name="q89" value="c"> c) rgba</label>
+        <label><input type="radio" name="q89" value="d"> d) filter</label>
+    </div>
+    <div class="answer-box" id="answer89" data-correct-answer="a">Correct Answer: a) opacity</div>
+</div>
+
+<div class="question">
+    <h3>90. What value of the box-shadow property creates an inner shadow?</h3>
+    <div class="options">
+        <label><input type="radio" name="q90" value="a"> a) inset</label>
+        <label><input type="radio" name="q90" value="b"> b) blur</label>
+        <label><input type="radio" name="q90" value="c"> c) spread</label>
+        <label><input type="radio" name="q90" value="d"> d) offset</label>
+    </div>
+    <div class="answer-box" id="answer90" data-correct-answer="a">Correct Answer: a) inset</div>
+</div>
+
+<div class="question">
+    <h3>91. Image maps use &lt;area&gt; elements to define clickable areas.</h3>
+    <div class="options">
+        <label><input type="radio" name="q91" value="a"> a) True</label>
+        <label><input type="radio" name="q91" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer91" data-correct-answer="a">Correct Answer: a) True</div>
+</div>
+
+<div class="question">
+    <h3>92. Linear gradients require a background-image property.</h3>
+    <div class="options">
+        <label><input type="radio" name="q92" value="a"> a) True</label>
+        <label><input type="radio" name="q92" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer92" data-correct-answer="a">Correct Answer: a) True</div>
+</div>
+
+<div class="question">
+    <h3>93. What does the linear-gradient() function do in CSS?</h3>
+    <div class="options">
+        <label><input type="radio" name="q93" value="a"> a) Creates a circular gradient</label>
+        <label><input type="radio" name="q93" value="b"> b) Creates a smooth color transition in one direction</label>
+        <label><input type="radio" name="q93" value="c"> c) Applies a solid background color</label>
+        <label><input type="radio" name="q93" value="d"> d) Aligns text to the right</label>
+    </div>
+    <div class="answer-box" id="answer93" data-correct-answer="b">Correct Answer: b) Creates a smooth color transition in one direction</div>
+</div>
+
+<div class="question">
+    <h3>94. What is the purpose of the radial-gradient() function in CSS?</h3>
+    <div class="options">
+        <label><input type="radio" name="q94" value="a"> a) Creates a color transition in a straight line</label>
+        <label><input type="radio" name="q94" value="b"> b) Creates a circular or outward gradient from the center</label>
+        <label><input type="radio" name="q94" value="c"> c) Applies a solid background image</label>
+        <label><input type="radio" name="q94" value="d"> d) Repeats the background image</label>
+    </div>
+    <div class="answer-box" id="answer94" data-correct-answer="b">Correct Answer: b) Creates a circular or outward gradient from the center</div>
+</div>
+
+<div class="question">
+    <h3>95. A form in HTML is used to organize and accept input from users.</h3>
+    <div class="options">
+        <label><input type="radio" name="q95" value="a"> a) True</label>
+        <label><input type="radio" name="q95" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer95" data-correct-answer="a">Correct Answer: a) True</div>
+</div>
+
+<div class="question">
+    <h3>96. Which of the following is an example of form control?</h3>
+    <div class="options">
+        <label><input type="radio" name="q96" value="a"> a) Text boxes</label>
+        <label><input type="radio" name="q96" value="b"> b) Checkboxes</label>
+        <label><input type="radio" name="q96" value="c"> c) Buttons</label>
+        <label><input type="radio" name="q96" value="d"> d) All of the above</label>
+    </div>
+    <div class="answer-box" id="answer96" data-correct-answer="d">Correct Answer: d) All of the above</div>
+</div>
+
+<div class="question">
+    <h3>97. After a form is submitted, the data must be stored in the user's browser and not sent to the server.</h3>
+    <div class="options">
+        <label><input type="radio" name="q97" value="a"> a) True</label>
+        <label><input type="radio" name="q97" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer97" data-correct-answer="b|After a form is submitted, the browser sends the data to the server for processing.">Correct Answer: b) False</div>
+</div>
+
+<div class="question">
+    <h3>98. A drop-down list is used to display images in a form.</h3>
+    <div class="options">
+        <label><input type="radio" name="q98" value="a"> a) True</label>
+        <label><input type="radio" name="q98" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer98" data-correct-answer="b|A drop-down list is used to capture limited options in a form.">Correct Answer: b) False</div>
+</div>
+<div class="question">
+    <h3>99. Forms have two components: the HTML form itself and server-side processing.</h3>
+    <div class="options">
+        <label><input type="radio" name="q99" value="a"> a) True</label>
+        <label><input type="radio" name="q99" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer99" data-correct-answer="a">Correct Answer: a) True</div>
+</div>
+
+<div class="question">
+    <h3>100. Multiple forms can be included on a single webpage, and they can be nested inside one another.</h3>
+    <div class="options">
+        <label><input type="radio" name="q100" value="a"> a) True</label>
+        <label><input type="radio" name="q100" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer100" data-correct-answer="b|Multiple forms can be included on a single webpage, but they cannot be nested inside one another">Correct Answer: b) False</div>
+</div>
+
+<div class="question">
+    <h3>101. The GET method is more secure than the POST method.</h3>
+    <div class="options">
+        <label><input type="radio" name="q101" value="a"> a) True</label>
+        <label><input type="radio" name="q101" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer101" data-correct-answer="b|The POST method is more secure than the GET method">Correct Answer: b) False</div>
+</div>
+
+<div class="question">
+    <h3>102. The action attribute specifies the server-side script that processes the form data.</h3>
+    <div class="options">
+        <label><input type="radio" name="q102" value="a"> a) True</label>
+        <label><input type="radio" name="q102" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer102" data-correct-answer="a">Correct Answer: a) True</div>
+</div>
+
+<div class="question">
+    <h3>103. The POST method sends form data in the HTTP Entity Body, while the GET method appends it to the URL.</h3>
+    <div class="options">
+        <label><input type="radio" name="q103" value="a"> a) True</label>
+        <label><input type="radio" name="q103" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer103" data-correct-answer="a">Correct Answer: a) True</div>
+</div>
+
+<div class="question">
+    <h3>104. Which HTML element is a void tag used for different types of form controls?</h3>
+    <div class="options">
+        <label><input type="radio" name="q104" value="a"> a) &lt;div&gt;</label>
+        <label><input type="radio" name="q104" value="b"> b) &lt;input&gt;</label>
+        <label><input type="radio" name="q104" value="c"> c) &lt;select&gt;</label>
+        <label><input type="radio" name="q104" value="d"> d) &lt;form&gt;</label>
+    </div>
+    <div class="answer-box" id="answer104" data-correct-answer="b">Correct Answer: b) &lt;input&gt;</div>
+</div>
+
+<div class="question">
+    <h3>105. The size attribute controls the width of the text box, while maxlength limits the number of characters allowed.</h3>
+    <div class="options">
+        <label><input type="radio" name="q105" value="a"> a) True</label>
+        <label><input type="radio" name="q105" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer105" data-correct-answer="a">Correct Answer: a) True</div>
+</div>
+
+<div class="question">
+    <h3>106. What is the purpose of the disabled attribute in a form control?</h3>
+    <div class="options">
+        <label><input type="radio" name="q106" value="a"> a) To hide the form control</label>
+        <label><input type="radio" name="q106" value="b"> b) To make the form control uneditable and inactive</label>
+        <label><input type="radio" name="q106" value="c"> c) To make the form control mandatory</label>
+        <label><input type="radio" name="q106" value="d"> d) To allow multiple selections</label>
+    </div>
+    <div class="answer-box" id="answer106" data-correct-answer="b">Correct Answer: b) To make the form control uneditable and inactive</div>
+</div>
+
+<div class="question">
+    <h3>107. The submit button triggers the action method and sends the form data to the web server.</h3>
+    <div class="options">
+        <label><input type="radio" name="q107" value="a"> a) True</label>
+        <label><input type="radio" name="q107" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer107" data-correct-answer="a">Correct Answer: a) True</div>
+</div>
+
+<div class="question">
+    <h3>108. Which input allows users to enter information that is hidden as they type?</h3>
+    <div class="options">
+        <label><input type="radio" name="q108" value="a"> a) Checkbox</label>
+        <label><input type="radio" name="q108" value="b"> b) Radio button</label>
+        <label><input type="radio" name="q108" value="c"> c) Text box</label>
+        <label><input type="radio" name="q108" value="d"> d) Password field</label>
+    </div>
+    <div class="answer-box" id="answer108" data-correct-answer="d">Correct Answer: d) Password field</div>
+</div>
+
+<div class="question">
+    <h3>109. Which input type allows users to select one or more options from a group?</h3>
+    <div class="options">
+        <label><input type="radio" name="q109" value="a"> a) Checkbox</label>
+        <label><input type="radio" name="q109" value="b"> b) Radio button</label>
+        <label><input type="radio" name="q109" value="c"> c) Text box</label>
+        <label><input type="radio" name="q109" value="d"> d) Password field</label>
+    </div>
+    <div class="answer-box" id="answer109" data-correct-answer="a">Correct Answer: a) Checkbox</div>
+</div>
+
+<div class="question">
+    <h3>110. Which input allows users to select exactly one option from a group?</h3>
+    <div class="options">
+        <label><input type="radio" name="q110" value="a"> a) Checkbox</label>
+        <label><input type="radio" name="q110" value="b"> b) Radio button</label>
+        <label><input type="radio" name="q110" value="c"> c) Text box</label>
+        <label><input type="radio" name="q110" value="d"> d) Password field</label>
+    </div>
+    <div class="answer-box" id="answer110" data-correct-answer="b">Correct Answer: b) Radio button</div>
+</div>
+
+<div class="question">
+    <h3>111. The &lt;textarea&gt; element is used to create a scrolling text box for multi-line input.</h3>
+    <div class="options">
+        <label><input type="radio" name="q111" value="a"> a) True</label>
+        <label><input type="radio" name="q111" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer111" data-correct-answer="a">Correct Answer: a) True</div>
+</div>
+
+<div class="question">
+    <h3>112. The &lt;select&gt; element must include &lt;option&gt; elements to define its choices.</h3>
+    <div class="options">
+        <label><input type="radio" name="q112" value="a"> a) True</label>
+        <label><input type="radio" name="q112" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer112" data-correct-answer="a">Correct Answer: a) True</div>
+</div>
+
+<div class="question">
+    <h3>113. What does the size attribute in a &lt;select&gt; element control?</h3>
+    <div class="options">
+        <label><input type="radio" name="q113" value="a"> a) The total number of options in the list</label>
+        <label><input type="radio" name="q113" value="b"> b) How many options are visible at once</label>
+        <label><input type="radio" name="q113" value="c"> c) The maximum length of the option text</label>
+        <label><input type="radio" name="q113" value="d"> d) Whether multiple options can be selected</label>
+    </div>
+    <div class="answer-box" id="answer113" data-correct-answer="b">Correct Answer: b) How many options are visible at once</div>
+</div>
+
+<div class="question">
+    <h3>114. In a radio button group, the value attribute is used by the browser to process the radio buttons as a group.</h3>
+    <div class="options">
+        <label><input type="radio" name="q114" value="a"> a) True</label>
+        <label><input type="radio" name="q114" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer114" data-correct-answer="b|The name attribute groups radio buttons, not the value attribute.">Correct Answer: b) False</div>
+</div>
+
+<div class="question">
+    <h3>115. The button element can contain both text and images, while input element can only show text.</h3>
+    <div class="options">
+        <label><input type="radio" name="q115" value="a"> a) True</label>
+        <label><input type="radio" name="q115" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer115" data-correct-answer="a">Correct Answer: a) True</div>
+</div>
+
+<div class="question">
+    <h3>116. The button element has only three types: submit, reset, and button.</h3>
+    <div class="options">
+        <label><input type="radio" name="q116" value="a"> a) True</label>
+        <label><input type="radio" name="q116" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer116" data-correct-answer="a">Correct Answer: a) True</div>
+</div>
+
+<div class="question">
+    <h3>117. Which technique is used to increase the accessibility of form controls?</h3>
+    <div class="options">
+        <label><input type="radio" name="q117" value="a"> a) Tabindex Attribute</label>
+        <label><input type="radio" name="q117" value="b"> b) Label Element</label>
+        <label><input type="radio" name="q117" value="c"> c) Fieldset Element</label>
+        <label><input type="radio" name="q117" value="d"> d) All of the above</label>
+    </div>
+    <div class="answer-box" id="answer117" data-correct-answer="d">Correct Answer: d) All of the above</div>
+</div>
+
+<div class="question">
+    <h3>118. The name attribute is used to send data to the server, while the id attribute is used for labels, anchors, and CSS selectors.</h3>
+    <div class="options">
+        <label><input type="radio" name="q118" value="a"> a) True</label>
+        <label><input type="radio" name="q118" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer118" data-correct-answer="a">Correct Answer: a) True</div>
+</div>
+
+<div class="question">
+    <h3>119. Which element is used to associate a text description with a form control?</h3>
+    <div class="options">
+        <label><input type="radio" name="q119" value="a"> a) &lt;input&gt;</label>
+        <label><input type="radio" name="q119" value="b"> b) &lt;label&gt;</label>
+        <label><input type="radio" name="q119" value="c"> c) &lt;fieldset&gt;</label>
+        <label><input type="radio" name="q119" value="d"> d) &lt;legend&gt;</label>
+    </div>
+    <div class="answer-box" id="answer119" data-correct-answer="b">Correct Answer: b) &lt;label&gt;</div>
+</div>
+
+<div class="question">
+    <h3>120. What is incorrect in the following code?</h3>
+    <pre>&lt;label for="CustEmail"&gt;Email:&lt;/label&gt;<br>&lt;input type="text" name="CustEmail" id="email"&gt;</pre>
+    <div class="options">
+        <label><input type="radio" name="q120" value="a"> a) The for attribute does not match the id of the input.</label>
+        <label><input type="radio" name="q120" value="b"> b) The name attribute must match the for attribute.</label>
+        <label><input type="radio" name="q120" value="c"> c) The &lt;label&gt; cannot have a for attribute.</label>
+        <label><input type="radio" name="q120" value="d"> d) There is nothing wrong with the code.</label>
+    </div>
+    <div class="answer-box" id="answer120" data-correct-answer="a">Correct Answer: a) The for attribute does not match the id of the input.</div>
+</div>
+
+<div class="question">
+    <h3>121. Which element is used to visually group form elements with a border or outline?</h3>
+    <div class="options">
+        <label><input type="radio" name="q121" value="a"> a) &lt;legend&gt;</label>
+        <label><input type="radio" name="q121" value="b"> b) &lt;fieldset&gt;</label>
+        <label><input type="radio" name="q121" value="c"> c) &lt;div&gt;</label>
+        <label><input type="radio" name="q121" value="d"> d) &lt;section&gt;</label>
+    </div>
+    <div class="answer-box" id="answer121" data-correct-answer="b">Correct Answer: b) &lt;fieldset&gt;</div>
+</div>
+
+<div class="question">
+    <h3>122. Which element provides a text description for a &lt;fieldset&gt; grouping?</h3>
+    <div class="options">
+        <label><input type="radio" name="q122" value="a"> a) &lt;label&gt;</label>
+        <label><input type="radio" name="q122" value="b"> b) &lt;caption&gt;</label>
+        <label><input type="radio" name="q122" value="c"> c) &lt;legend&gt;</label>
+        <label><input type="radio" name="q122" value="d"> d) &lt;title&gt;</label>
+    </div>
+    <div class="answer-box" id="answer122" data-correct-answer="c">Correct Answer: c) &lt;legend&gt;</div>
+</div>
+
+<div class="question">
+    <h3>123. Inside which HTML element do we put the JavaScript?</h3>
+    <div class="options">
+        <label><input type="radio" name="q123" value="a"> a) &lt;javascript&gt;</label>
+        <label><input type="radio" name="q123" value="b"> b) &lt;js&gt;</label>
+        <label><input type="radio" name="q123" value="c"> c) &lt;script&gt;</label>
+        <label><input type="radio" name="q123" value="d"> d) &lt;scripting&gt;</label>
+    </div>
+    <div class="answer-box" id="answer123" data-correct-answer="c">Correct Answer: c) &lt;script&gt;</div>
+</div>
+
+<div class="question">
+    <h3>124. What type of scripting language is JavaScript?</h3>
+    <div class="options">
+        <label><input type="radio" name="q124" value="a"> a) Server-side scripting language</label>
+        <label><input type="radio" name="q124" value="b"> b) Object-based, client-side scripting language</label>
+        <label><input type="radio" name="q124" value="c"> c) Functional, server-side language</label>
+        <label><input type="radio" name="q124" value="d"> d) Platform-independent server-side language</label>
+    </div>
+    <div class="answer-box" id="answer124" data-correct-answer="b">Correct Answer: b) Object-based, client-side scripting language</div>
+</div>
+
+<div class="question">
+    <h3>125. JavaScript is a server-side scripting language.</h3>
+    <div class="options">
+        <label><input type="radio" name="q125" value="a"> a) True</label>
+        <label><input type="radio" name="q125" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer125" data-correct-answer="b|JavaScript is interpreted by the client, making it a client-side scripting language">Correct Answer: b) False</div>
+</div>
+
+<div class="question">
+    <h3>126. Why is client-side form validation with JavaScript important?</h3>
+    <div class="options">
+        <label><input type="radio" name="q126" value="a"> a) To eliminate the need for server-side validation</label>
+        <label><input type="radio" name="q126" value="b"> b) To reduce server load by filtering invalid data early</label>
+        <label><input type="radio" name="q126" value="c"> c) To modify server-side files directly</label>
+        <label><input type="radio" name="q126" value="d"> d) To store data permanently on the browser</label>
+    </div>
+    <div class="answer-box" id="answer126" data-correct-answer="b">Correct Answer: b) To reduce server load by filtering invalid data early</div>
+</div>
+
+<div class="question">
+    <h3>127. Where is the correct place to insert a JavaScript?</h3>
+    <div class="options">
+        <label><input type="radio" name="q127" value="a"> a) The &lt;body&gt; section</label>
+        <label><input type="radio" name="q127" value="b"> b) Both the &lt;head&gt; section and the &lt;body&gt; section are correct</label>
+        <label><input type="radio" name="q127" value="c"> c) The &lt;head&gt; section</label>
+        <label><input type="radio" name="q127" value="d"> d) None of the above</label>
+    </div>
+    <div class="answer-box" id="answer127" data-correct-answer="b">Correct Answer: b) Both the &lt;head&gt; section and the &lt;body&gt; section are correct</div>
+</div>
+
+<div class="question">
+    <h3>128. How do you show a pop-up message with "Welcome to Our Site"?</h3>
+    <div class="options">
+        <label><input type="radio" name="q128" value="a"> a) alertBox("Welcome to Our Site");</label>
+        <label><input type="radio" name="q128" value="b"> b) msg("Welcome to Our Site");</label>
+        <label><input type="radio" name="q128" value="c"> c) alert("Welcome to Our Site");</label>
+        <label><input type="radio" name="q128" value="d"> d) msgBox("Welcome to Our Site");</label>
+    </div>
+    <div class="answer-box" id="answer128" data-correct-answer="c">Correct Answer: c) alert("Welcome to Our Site");</div>
+</div>
+
+<div class="question">
+    <h3>129. JavaScript variable names are case-insensitive, meaning name is the same as NAME.</h3>
+    <div class="options">
+        <label><input type="radio" name="q129" value="a"> a) True</label>
+        <label><input type="radio" name="q129" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer129" data-correct-answer="b|meaning name and NAME are considered two different variables.">Correct Answer: b) False</div>
+</div>
+
+<div class="question">
+    <h3>130. What is the correct JavaScript syntax to change the content of the HTML element below?</h3>
+    <pre>&lt;p id="demo"&gt;This is a demonstration.&lt;/p&gt;</pre>
+    <div class="options">
+        <label><input type="radio" name="q130" value="a"> a) document.getElementById("demo").innerHTML = "Hello World!";</label>
+        <label><input type="radio" name="q130" value="b"> b) #demo.innerHTML = "Hello World!";</label>
+        <label><input type="radio" name="q130" value="c"> c) document.getElementByName("demo").innerHTML = "Hello World!";</label>
+        <label><input type="radio" name="q130" value="d"> d) document.getElement("p").innerHTML = "Hello World!";</label>
+    </div>
+    <div class="answer-box" id="answer130" data-correct-answer="a">Correct Answer: a) document.getElementById("demo").innerHTML = "Hello World!";</div>
+</div>
+
+<div class="question">
+    <h3>131. What is the main purpose of the DOM?</h3>
+    <div class="options">
+        <label><input type="radio" name="q131" value="a"> a) To convert HTML into CSS</label>
+        <label><input type="radio" name="q131" value="b"> b) To allow JavaScript to access and modify HTML elements</label>
+        <label><input type="radio" name="q131" value="c"> c) To improve browser speed</label>
+        <label><input type="radio" name="q131" value="d"> d) To execute code on the server</label>
+    </div>
+    <div class="answer-box" id="answer131" data-correct-answer="b">Correct Answer: b) To allow JavaScript to access and modify HTML elements</div>
+</div>
+
+<div class="question">
+    <h3>132. What can be done using the DOM?</h3>
+    <div class="options">
+        <label><input type="radio" name="q132" value="a"> a) Delete HTML elements from the page</label>
+        <label><input type="radio" name="q132" value="b"> b) Modify text inside HTML elements</label>
+        <label><input type="radio" name="q132" value="c"> c) Handle user events like clicking</label>
+        <label><input type="radio" name="q132" value="d"> d) All of the above</label>
+    </div>
+    <div class="answer-box" id="answer132" data-correct-answer="d">Correct Answer: d) All of the above</div>
+</div>
+
+<div class="question">
+    <h3>133. The DOM can only display HTML content but cannot modify it.</h3>
+    <div class="options">
+        <label><input type="radio" name="q133" value="a"> a) True</label>
+        <label><input type="radio" name="q133" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer133" data-correct-answer="b|The DOM allows modifying, adding, and deleting elements">Correct Answer: b) False</div>
+</div>
+
+<div class="question">
+    <h3>134. What does the browser create when a web page is loaded?</h3>
+    <div class="options">
+        <label><input type="radio" name="q134" value="a"> a) CSS Model</label>
+        <label><input type="radio" name="q134" value="b"> b) Document Object Model (DOM)</label>
+        <label><input type="radio" name="q134" value="c"> c) JavaScript Object Model</label>
+        <label><input type="radio" name="q134" value="d"> d) HTML Structure</label>
+    </div>
+    <div class="answer-box" id="answer134" data-correct-answer="b">Correct Answer: b) Document Object Model (DOM)</div>
+</div>
+
+<div class="question">
+    <h3>135. What is considered an object when using the DOM?</h3>
+    <div class="options">
+        <label><input type="radio" name="q135" value="a"> a) The browser window</label>
+        <label><input type="radio" name="q135" value="b"> b) The web page document</label>
+        <label><input type="radio" name="q135" value="c"> c) Any HTML element</label>
+        <label><input type="radio" name="q135" value="d"> d) All of the above</label>
+    </div>
+    <div class="answer-box" id="answer135" data-correct-answer="d">Correct Answer: d) All of the above</div>
+</div>
+
+<div class="question">
+    <h3>136. Which of the following is an example of a DOM property?</h3>
+    <div class="options">
+        <label><input type="radio" name="q136" value="a"> a) document.bgcolor</label>
+        <label><input type="radio" name="q136" value="b"> b) document.getElementById()</label>
+        <label><input type="radio" name="q136" value="c"> c) document.write()</label>
+        <label><input type="radio" name="q136" value="d"> d) document.onload()</label>
+    </div>
+    <div class="answer-box" id="answer136" data-correct-answer="a">Correct Answer: a) document.bgcolor</div>
+</div>
+
+<div class="question">
+    <h3>137. Which of the following is an example of a DOM method?</h3>
+    <div class="options">
+        <label><input type="radio" name="q137" value="a"> a) document.bgcolor</label>
+        <label><input type="radio" name="q137" value="b"> b) document.write()</label>
+        <label><input type="radio" name="q137" value="c"> c) document.lastModified</label>
+        <label><input type="radio" name="q137" value="d"> d) image1.src</label>
+    </div>
+    <div class="answer-box" id="answer137" data-correct-answer="b">Correct Answer: b) document.write()</div>
+</div>
+
+<div class="question">
+    <h3>138. In the code below, getElementById is a method, while innerHTML is a property.</h3>
+    <pre>&lt;p id="demo"&gt;&lt;/p&gt;<br>&lt;script&gt;<br> document.getElementById("demo").innerHTML = "Hello World!";<br>&lt;/script&gt;</pre>
+    <div class="options">
+        <label><input type="radio" name="q138" value="a"> a) True</label>
+        <label><input type="radio" name="q138" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer138" data-correct-answer="a">Correct Answer: a) True</div>
+</div>
+
+<div class="question">
+    <h3>139. The DOM is a collection of objects, properties, and methods.</h3>
+    <div class="options">
+        <label><input type="radio" name="q139" value="a"> a) True</label>
+        <label><input type="radio" name="q139" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer139" data-correct-answer="a">Correct Answer: a) True</div>
+</div>
+
+<div class="question">
+    <h3>140. JavaScript uses the DOM to manipulate elements in an HTML document.</h3>
+    <div class="options">
+        <label><input type="radio" name="q140" value="a"> a) True</label>
+        <label><input type="radio" name="q140" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer140" data-correct-answer="a">Correct Answer: a) True</div>
+</div>
+
+<div class="question">
+    <h3>141. Which event is triggered when the user places the mouse on an element?</h3>
+    <div class="options">
+        <label><input type="radio" name="q141" value="a"> a) click</label>
+        <label><input type="radio" name="q141" value="b"> b) mouseover</label>
+        <label><input type="radio" name="q141" value="c"> c) mouseout</label>
+        <label><input type="radio" name="q141" value="d"> d) load</label>
+    </div>
+    <div class="answer-box" id="answer141" data-correct-answer="b">Correct Answer: b) mouseover</div>
+</div>
+
+<div class="question">
+    <h3>142. Which event is triggered when the user removes the mouse from an element?</h3>
+    <div class="options">
+        <label><input type="radio" name="q142" value="a"> a) mouseover</label>
+        <label><input type="radio" name="q142" value="b"> b) mouseout</label>
+        <label><input type="radio" name="q142" value="c"> c) click</label>
+        <label><input type="radio" name="q142" value="d"> d) unload</label>
+    </div>
+    <div class="answer-box" id="answer142" data-correct-answer="b">Correct Answer: b) mouseout</div>
+</div>
+
+<div class="question">
+    <h3>143. Is the following code correct?</h3>
+    <pre>&lt;button click="alert('Button clicked!')"&gt;Click Me&lt;/button&gt;</pre>
+    <div class="options">
+        <label><input type="radio" name="q143" value="a"> a) True</label>
+        <label><input type="radio" name="q143" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer143" data-correct-answer="b">Correct Answer: b) False</div>
+</div>
+
+<div class="question">
+    <h3>144. What does the following code do?</h3>
+    <pre>&lt;a href="home.html" onmouseover="alert('Click to go home')"&gt;Home&lt;/a&gt;</pre>
+    <div class="options">
+        <label><input type="radio" name="q144" value="a"> a) Displays an alert box when the hyperlink is clicked</label>
+        <label><input type="radio" name="q144" value="b"> b) Displays an alert box when the mouse is placed over the hyperlink</label>
+        <label><input type="radio" name="q144" value="c"> c) Redirects to "home.htm" immediately</label>
+        <label><input type="radio" name="q144" value="d"> d) Changes the text of the hyperlink</label>
+    </div>
+    <div class="answer-box" id="answer144" data-correct-answer="b">Correct Answer: b) Displays an alert box when the mouse is placed over the hyperlink</div>
+</div>
+
+<div class="question">
+    <h3>145. A JavaScript variable must have a fixed data type.</h3>
+    <div class="options">
+        <label><input type="radio" name="q145" value="a"> a) True</label>
+        <label><input type="radio" name="q145" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer145" data-correct-answer="b|A JavaScript variable can contain numbers, strings, or other data types.">Correct Answer: b) False</div>
+</div>
+
+<div class="question">
+    <h3>146. How do you declare a variable in JavaScript?</h3>
+    <div class="options">
+        <label><input type="radio" name="q146" value="a"> a) var userName;</label>
+        <label><input type="radio" name="q146" value="b"> b) variable userName;</label>
+        <label><input type="radio" name="q146" value="c"> c) declare userName;</label>
+        <label><input type="radio" name="q146" value="d"> d) assign userName;</label>
+    </div>
+    <div class="answer-box" id="answer146" data-correct-answer="a">Correct Answer: a) var userName;</div>
+</div>
+
+<div class="question">
+    <h3>147. How do you assign a value to a variable in JavaScript?</h3>
+    <div class="options">
+        <label><input type="radio" name="q147" value="a"> a) userName = "Karen";</label>
+        <label><input type="radio" name="q147" value="b"> b) let userName = "Karen";</label>
+        <label><input type="radio" name="q147" value="c"> c) var userName == "Karen";</label>
+        <label><input type="radio" name="q147" value="d"> d) userName : "Karen";</label>
+    </div>
+    <div class="answer-box" id="answer147" data-correct-answer="a">Correct Answer: a) userName = "Karen";</div>
+</div>
+
+<div class="question">
+    <h3>148. How do you display the value of a variable in JavaScript?</h3>
+    <div class="options">
+        <label><input type="radio" name="q148" value="a"> a) document.write(userName);</label>
+        <label><input type="radio" name="q148" value="b"> b) alert(userName);</label>
+        <label><input type="radio" name="q148" value="c"> c) console.log(userName);</label>
+        <label><input type="radio" name="q148" value="d"> d) display(userName);</label>
+    </div>
+    <div class="answer-box" id="answer148" data-correct-answer="a">Correct Answer: a) document.write(userName);</div>
+</div>
+
+<div class="question">
+    <h3>149. What is the difference between the two scripts?</h3>
+    <pre>Script 1: &lt;h2&gt;Hello&lt;/h2&gt;<br>&lt;script&gt;<br> var userName;<br> userName = "Karen";<br> document.write(userName);<br>&lt;/script&gt;</pre>
+    <pre>Script 2: &lt;script&gt;<br> var userName;<br> userName = "Karen";<br> document.write("&lt;h2&gt;Hello " + userName + "&lt;/h2&gt;");<br>&lt;/script&gt;</pre>
+    <div class="options">
+        <label><input type="radio" name="q149" value="a"> a) Both scripts have the same effect.</label>
+        <label><input type="radio" name="q149" value="b"> b) The second script will not display the text in &lt;h2&gt; format.</label>
+    </div>
+    <div class="answer-box" id="answer149" data-correct-answer="a|We just add a single space">Correct Answer: a) Both scripts have the same effect.</div>
+</div>
+
+<div class="question">
+    <h3>150. Which JavaScript method is used to collect input from the user?</h3>
+    <div class="options">
+        <label><input type="radio" name="q150" value="a"> a) alert()</label>
+        <label><input type="radio" name="q150" value="b"> b) prompt()</label>
+        <label><input type="radio" name="q150" value="c"> c) confirm()</label>
+        <label><input type="radio" name="q150" value="d"> d) document.write()</label>
+    </div>
+    <div class="answer-box" id="answer150" data-correct-answer="b">Correct Answer: b) prompt()</div>
+</div>
+
+<div class="question">
+    <h3>151. Which of the following is an example of the correct use of the prompt() method?</h3>
+    <div class="options">
+        <label><input type="radio" name="q151" value="a"> a) myName = alert("Enter your name");</label>
+        <label><input type="radio" name="q151" value="b"> b) myName = prompt("What is your name?");</label>
+        <label><input type="radio" name="q151" value="c"> c) prompt(myName = "What is your name?");</label>
+        <label><input type="radio" name="q151" value="d"> d) document.prompt("What is your name?");</label>
+    </div>
+    <div class="answer-box" id="answer151" data-correct-answer="b">Correct Answer: b) myName = prompt("What is your name?");</div>
+</div>
+
+<div class="question">
+    <h3>152. How many mistakes are in the following code?</h3>
+    <pre>&lt;head&gt;<br> &lt;script&gt;<br> function promptQuantity() {<br> Int var quantity;<br> quantity = prompt("Please type a quantity greater than 0");<br> if (quantity <= 0) {<br> alert("Quantity is not greater than 0.");<br> } else {<br> alert("Thank you for entering a quantity greater than 0.");<br> }<br> }<br> &lt;/script&gt;<br>&lt;/head&gt;<br>&lt;body&gt;<br>&lt;input type="button" value="Click to enter quantity" onclick="function promptQuantity();"&gt;<br>&lt;/body&gt;</pre>
+    <div class="options">
+        <label><input type="radio" name="q152" value="a"> a) 0</label>
+        <label><input type="radio" name="q152" value="b"> b) 1</label>
+        <label><input type="radio" name="q152" value="c"> c) 2</label>
+        <label><input type="radio" name="q152" value="d"> d) 3</label>
+    </div>
+    <div class="answer-box" id="answer152" data-correct-answer="c">Correct Answer: c) 2</div>
+</div>
+
+<div class="question">
+    <h3>153. What is the benefit of placing function definitions in the &lt;head&gt; section?</h3>
+    <div class="options">
+        <label><input type="radio" name="q153" value="a"> a) It ensures the function is loaded before being called.</label>
+        <label><input type="radio" name="q153" value="b"> b) It makes the function execute automatically.</label>
+        <label><input type="radio" name="q153" value="c"> c) It restricts the function to the &lt;body&gt; section only.</label>
+        <label><input type="radio" name="q153" value="d"> d) It improves the performance of the function.</label>
+    </div>
+    <div class="answer-box" id="answer153" data-correct-answer="a">Correct Answer: a) It ensures the function is loaded before being called.</div>
+</div>
+
+<div class="question">
+    <h3>154. Local variables are only accessible inside the function.</h3>
+    <div class="options">
+        <label><input type="radio" name="q154" value="a"> a) True</label>
+        <label><input type="radio" name="q154" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer154" data-correct-answer="a">Correct Answer: a) True</div>
+</div>
+
+<div class="question">
+    <h3>155. Which of the following can JavaScript validate in a form?</h3>
+    <div class="options">
+        <label><input type="radio" name="q155" value="a"> a) If the name is entered</label>
+        <label><input type="radio" name="q155" value="b"> b) If the email is in the correct format</label>
+        <label><input type="radio" name="q155" value="c"> c) If the phone number is valid</label>
+        <label><input type="radio" name="q155" value="d"> d) All of the above</label>
+    </div>
+    <div class="answer-box" id="answer155" data-correct-answer="d">Correct Answer: d) All of the above</div>
+</div>
+
+<div class="question">
+    <h3>156. What does the onsubmit="return validateForm();" attribute do in this code?</h3>
+    <pre>&lt;form method="post" action="submit-form.php" onsubmit="return validateForm();"&gt;<br> &lt;input type="text" name="username" placeholder="Enter your name"&gt;<br> &lt;input type="submit" value="Submit"&gt;<br>&lt;/form&gt;</pre>
+    <div class="options">
+        <label><input type="radio" name="q156" value="a"> a) It submits the form without validation.</label>
+        <label><input type="radio" name="q156" value="b"> b) It checks the form data using the validateForm() function before submission.</label>
+        <label><input type="radio" name="q156" value="c"> c) It clears the form fields before submission.</label>
+        <label><input type="radio" name="q156" value="d"> d) It stops the form from being submitted.</label>
+    </div>
+    <div class="answer-box" id="answer156" data-correct-answer="b">Correct Answer: b) It checks the form data using the validateForm() function before submission.</div>
+</div>
+
+<div class="question">
+    <h3>157. What does PHP stand for?</h3>
+    <div class="options">
+        <label><input type="radio" name="q157" value="a"> a) Preprocessed Hypertext Pages</label>
+        <label><input type="radio" name="q157" value="b"> b) PHP: Hypertext Preprocessor</label>
+        <label><input type="radio" name="q157" value="c"> c) Personal Home Pages</label>
+        <label><input type="radio" name="q157" value="d"> d) Processor of Hypertext Protocol</label>
+    </div>
+    <div class="answer-box" id="answer157" data-correct-answer="b">Correct Answer: b) PHP: Hypertext Preprocessor</div>
+</div>
+
+<div class="question">
+    <h3>158. Which of the following is true about PHP arrays?</h3>
+    <div class="options">
+        <label><input type="radio" name="q158" value="a"> a) Arrays in PHP can only store strings</label>
+        <label><input type="radio" name="q158" value="b"> b) Arrays in PHP must have sequential numeric indexes</label>
+        <label><input type="radio" name="q158" value="c"> c) Arrays in PHP can have different data types</label>
+        <label><input type="radio" name="q158" value="d"> d) PHP does not support associative arrays</label>
+    </div>
+    <div class="answer-box" id="answer158" data-correct-answer="c">Correct Answer: c) Arrays in PHP can have different data types</div>
+</div>
+
+<div class="question">
+    <h3>159. How can you access a value in an associative array in PHP?</h3>
+    <div class="options">
+        <label><input type="radio" name="q159" value="a"> a) $array->key</label>
+        <label><input type="radio" name="q159" value="b"> b) get($array[key])</label>
+        <label><input type="radio" name="q159" value="c"> c) $array["key"]</label>
+        <label><input type="radio" name="q159" value="d"> d) access($array[key])</label>
+    </div>
+    <div class="answer-box" id="answer159" data-correct-answer="c">Correct Answer: c) $array["key"]</div>
+</div>
+
+<div class="question">
+    <h3>160. PHP scripts are executed on the client side.</h3>
+    <div class="options">
+        <label><input type="radio" name="q160" value="a"> a) True</label>
+        <label><input type="radio" name="q160" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer160" data-correct-answer="b">Correct Answer: b) False</div>
+</div>
+
+<div class="question">
+    <h3>161. An associative array in PHP uses a key-value structure similar to a hash map.</h3>
+    <div class="options">
+        <label><input type="radio" name="q161" value="a"> a) True</label>
+        <label><input type="radio" name="q161" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer161" data-correct-answer="a">Correct Answer: a) True</div>
+</div>
+
+<div class="question">
+    <h3>162. What is the default file extension for PHP files?</h3>
+    <div class="options">
+        <label><input type="radio" name="q162" value="a"> a) .html</label>
+        <label><input type="radio" name="q162" value="b"> b) .txt</label>
+        <label><input type="radio" name="q162" value="c"> c) .php</label>
+        <label><input type="radio" name="q162" value="d"> d) .exe</label>
+    </div>
+    <div class="answer-box" id="answer162" data-correct-answer="c">Correct Answer: c) .php</div>
+</div>
+
+<div class="question">
+    <h3>163. How does a PHP script start and end?</h3>
+    <div class="options">
+        <label><input type="radio" name="q163" value="a"> a) &lt;script&gt; and &lt;/script&gt;</label>
+        <label><input type="radio" name="q163" value="b"> b) &lt;php&gt; and &lt;/php&gt;</label>
+        <label><input type="radio" name="q163" value="c"> c) &lt;?php and ?&gt;</label>
+        <label><input type="radio" name="q163" value="d"> d) &lt;?php and &gt;?</label>
+    </div>
+    <div class="answer-box" id="answer163" data-correct-answer="c">Correct Answer: c) &lt;?php and ?&gt;</div>
+</div>
+
+<div class="question">
+    <h3>164. A PHP script is executed on the server, and the plain HTML result is sent back to the browser.</h3>
+    <div class="options">
+        <label><input type="radio" name="q164" value="a"> a) True</label>
+        <label><input type="radio" name="q164" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer164" data-correct-answer="a">Correct Answer: a) True</div>
+</div>
+
+<div class="question">
+    <h3>165. A PHP script must always be placed at the top of the document.</h3>
+    <div class="options">
+        <label><input type="radio" name="q165" value="a"> a) True</label>
+        <label><input type="radio" name="q165" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer165" data-correct-answer="b|A PHP script can be placed anywhere in the document.">Correct Answer: b) False</div>
+</div>
+
+<div class="question">
+    <h3>166. In PHP, the only way to output text is with echo.</h3>
+    <div class="options">
+        <label><input type="radio" name="q166" value="a"> a) True</label>
+        <label><input type="radio" name="q166" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer166" data-correct-answer="b">Correct Answer: b) False</div>
+</div>
+
+<div class="question">
+    <h3>167. There is no difference in the output between echo and print in PHP.</h3>
+    <div class="options">
+        <label><input type="radio" name="q167" value="a"> a) True</label>
+        <label><input type="radio" name="q167" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer167" data-correct-answer="a">Correct Answer: a) True</div>
+</div>
+
+<div class="question">
+    <h3>168. In PHP, keywords like if, else, while, and echo are not case-sensitive.</h3>
+    <div class="options">
+        <label><input type="radio" name="q168" value="a"> a) True</label>
+        <label><input type="radio" name="q168" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer168" data-correct-answer="a">Correct Answer: a) True</div>
+</div>
+
+<div class="question">
+    <h3>169. In PHP, variable names are case-sensitive.</h3>
+    <div class="options">
+        <label><input type="radio" name="q169" value="a"> a) True</label>
+        <label><input type="radio" name="q169" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer169" data-correct-answer="a">Correct Answer: a) True</div>
+</div>
+
+<div class="question">
+    <h3>170. What will be the output of the following PHP code?</h3>
+    <pre>$txt = "Reading Books";<br> echo "I Like $txt!";</pre>
+    <div class="options">
+        <label><input type="radio" name="q170" value="a"> a) I Like $txt!</label>
+        <label><input type="radio" name="q170" value="b"> b) I Like Reading Books!</label>
+        <label><input type="radio" name="q170" value="c"> c) Error</label>
+        <label><input type="radio" name="q170" value="d"> d) I Like!</label>
+    </div>
+    <div class="answer-box" id="answer170" data-correct-answer="b">Correct Answer: b) I Like Reading Books!</div>
+</div>
+
+<div class="question">
+    <h3>171. What will be the output of the following PHP code?</h3>
+    <pre>$x = "world";<br> echo 'Hello ' . $x;</pre>
+    <div class="options">
+        <label><input type="radio" name="q171" value="a"> a) Hello world</label>
+        <label><input type="radio" name="q171" value="b"> b) Hello $x</label>
+        <label><input type="radio" name="q171" value="c"> c) Syntax error</label>
+        <label><input type="radio" name="q171" value="d"> d) Hello</label>
+    </div>
+    <div class="answer-box" id="answer171" data-correct-answer="a">Correct Answer: a) Hello world</div>
+</div>
+
+<div class="question">
+    <h3>172. What will be the output of the following PHP code?</h3>
+    <pre>$txt = "Reading Books";<br> echo 'I Like $txt!';</pre>
+    <div class="options">
+        <label><input type="radio" name="q172" value="a"> a) I Like $txt!</label>
+        <label><input type="radio" name="q172" value="b"> b) I Like Reading Books!</label>
+        <label><input type="radio" name="q172" value="c"> c) Error</label>
+        <label><input type="radio" name="q172" value="d"> d) I Like!</label>
+    </div>
+    <div class="answer-box" id="answer172" data-correct-answer="a">Correct Answer: a) I Like $txt!</div>
+</div>
+
+<div class="question">
+    <h3>173. When using the POST method, variables are displayed in the URL.</h3>
+    <div class="options">
+        <label><input type="radio" name="q173" value="a"> a) True</label>
+        <label><input type="radio" name="q173" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer173" data-correct-answer="b|The GET method variables are displayed in the URL">Correct Answer: b) False</div>
+</div>
+
+<div class="question">
+    <h3>174. In PHP, you can use both single quotes (' ') and double quotes (" ") for strings.</h3>
+    <div class="options">
+        <label><input type="radio" name="q174" value="a"> a) True</label>
+        <label><input type="radio" name="q174" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer174" data-correct-answer="a">Correct Answer: a) True</div>
+</div>
+
+<div class="question">
+    <h3>175. How many mistakes are there in the following PHP code?</h3>
+    <pre>&lt;?php<br> x = 10;<br> y = 20;<br> if $x > $y {<br> echo "x is greater than y"<br> } else {<br> echo "x is less than or equal to y";<br> }<br> ?&gt;<pre>
+    <div class="options">
+        <label><input type="radio" name="q175" value="a"> a) 2</label>
+        <label><input type="radio" name="q175" value="b"> b) 3</label>
+        <label><input type="radio" name="q175" value="c"> c) 4</label>
+        <label><input type="radio" name="q175" value="d"> d) 5</label>
+    </div>
+    <div class="answer-box" id="answer175" data-correct-answer="c">Correct Answer: c) 4</div>
+</div>
+
+<div class="question">
+    <h3>176. How do you create an array in PHP?</h3>
+    <div class="options">
+        <label><input type="radio" name="q176" value="a"> a) $cars = "Volvo", "BMW", "Toyota";</label>
+        <label><input type="radio" name="q176" value="b"> b) $cars = array["Volvo", "BMW", "Toyota"];</label>
+        <label><input type="radio" name="q176" value="c"> c) $cars = array("Volvo", "BMW", "Toyota");</label>
+        <label><input type="radio" name="q176" value="d"> d) $cars = {"Volvo", "BMW", "Toyota"};</label>
+    </div>
+    <div class="answer-box" id="answer176" data-correct-answer="c">Correct Answer: c) $cars = array("Volvo", "BMW", "Toyota");</div>
+</div>
+
+<div class="question">
+    <h3>177. How do you create a MySQL connection in PHP (MySQLi Object-Oriented)?</h3>
+    <div class="options">
+        <label><input type="radio" name="q177" value="a"> a) $conn = new mysqli($servername, $username, $password);</label>
+        <label><input type="radio" name="q177" value="b"> b) $conn = mysql_connect($servername, $username, $password);</label>
+        <label><input type="radio" name="q177" value="c"> c) $conn = mysqli_connect($servername, $username);</label>
+        <label><input type="radio" name="q177" value="d"> d) $conn = new mysql($servername, $username, $password);</label>
+    </div>
+    <div class="answer-box" id="answer177" data-correct-answer="a">Correct Answer: a) $conn = new mysqli($servername, $username, $password);</div>
+</div>
+
+<div class="question">
+    <h3>178. Which function is used to close a MySQLi connection manually in PHP?</h3>
+    <div class="options">
+        <label><input type="radio" name="q178" value="a"> a) mysqli_close($conn);</label>
+        <label><input type="radio" name="q178" value="b"> b) $conn->disconnect();</label>
+        <label><input type="radio" name="q178" value="c"> c) $conn->close();</label>
+        <label><input type="radio" name="q178" value="d"> d) disconnect($conn);</label>
+    </div>
+    <div class="answer-box" id="answer178" data-correct-answer="c">Correct Answer: c) $conn->close();</div>
+</div>
+
+<div class="question">
+    <h3>179. How do you store an SQL query in a variable in PHP?</h3>
+    <div class="options">
+        <label><input type="radio" name="q179" value="a"> a) $conn</label>
+        <label><input type="radio" name="q179" value="b"> b) $sql</label>
+        <label><input type="radio" name="q179" value="c"> c) $query</label>
+        <label><input type="radio" name="q179" value="d"> d) $stmt</label>
+    </div>
+    <div class="answer-box" id="answer179" data-correct-answer="b">Correct Answer: b) $sql</div>
+</div>
+
+<div class="question">
+    <h3>180. How many input fields are taken from the user in the following table?</h3>
+    <pre>CREATE TABLE MyGuests (<br> id INT(6) AUTO_INCREMENT PRIMARY KEY,<br> firstname VARCHAR(30) NOT NULL,<br> lastname VARCHAR(30) NOT NULL,<br> email VARCHAR(50),<br> reg_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP<br>);</pre>
+    <div class="options">
+        <label><input type="radio" name="q180" value="a"> a) 1</label>
+        <label><input type="radio" name="q180" value="b"> b) 2</label>
+        <label><input type="radio" name="q180" value="c"> c) 3</label>
+        <label><input type="radio" name="q180" value="d"> d) 4</label>
+    </div>
+    <div class="answer-box" id="answer180" data-correct-answer="c">Correct Answer: c) 3</div>
+</div>
+
+<div class="question">
+    <h3>181. What does the number in INT(6) represent in MySQL?</h3>
+    <div class="options">
+        <label><input type="radio" name="q181" value="a"> a) Maximum number of digits that can be stored</label>
+        <label><input type="radio" name="q181" value="b"> b) Display length for the number (deprecated)</label>
+        <label><input type="radio" name="q181" value="c"> c) Size of the storage in bytes</label>
+        <label><input type="radio" name="q181" value="d"> d) Maximum value for the integer</label>
+    </div>
+    <div class="answer-box" id="answer181" data-correct-answer="b">Correct Answer: b) Display length for the number (deprecated)</div>
+</div>
+
+<div class="question">
+    <h3>182. What does AUTO_INCREMENT do?</h3>
+    <div class="options">
+        <label><input type="radio" name="q182" value="a"> a) Automatically increases the value for each new row</label>
+        <label><input type="radio" name="q182" value="b"> b) Forces manual input of the value</label>
+        <label><input type="radio" name="q182" value="c"> c) Prevents duplicate values</label>
+        <label><input type="radio" name="q182" value="d"> d) Resets to 1 after each entry</label>
+    </div>
+    <div class="answer-box" id="answer182" data-correct-answer="a">Correct Answer: a) Automatically increases the value for each new row</div>
+</div>
+
+<div class="question">
+    <h3>183. When do we need $dbname in PHP?</h3>
+    <div class="options">
+        <label><input type="radio" name="q183" value="a"> a) To connect to a specific database</label>
+        <label><input type="radio" name="q183" value="b"> b) To define the server hostname</label>
+        <label><input type="radio" name="q183" value="c"> c) To store the name of the database</label>
+        <label><input type="radio" name="q183" value="d"> d) To set the server password</label>
+    </div>
+    <div class="answer-box" id="answer183" data-correct-answer="a">Correct Answer: a) To connect to a specific database</div>
+</div>
+
+<div class="question">
+    <h3>184. What does $result -> fetch_assoc() do?</h3>
+    <div class="options">
+        <label><input type="radio" name="q184" value="a"> a) Inserts data into the table</label>
+        <label><input type="radio" name="q184" value="b"> b) Fetches a row as an associative array</label>
+        <label><input type="radio" name="q184" value="c"> c) Counts the number of rows in the result</label>
+        <label><input type="radio" name="q184" value="d"> d) Checks the connection to the database</label>
+    </div>
+    <div class="answer-box" id="answer184" data-correct-answer="b">Correct Answer: b) Fetches a row as an associative array</div>
+</div>
+
+<div class="question">
+    <h3>185. Which MySQL statement is used to insert new data into a database?</h3>
+    <div class="options">
+        <label><input type="radio" name="q185" value="a"> a) ADD NEW</label>
+        <label><input type="radio" name="q185" value="b"> b) INSERT NEW</label>
+        <label><input type="radio" name="q185" value="c"> c) ADD RECORD</label>
+        <label><input type="radio" name="q185" value="d"> d) INSERT INTO</label>
+    </div>
+    <div class="answer-box" id="answer185" data-correct-answer="d">Correct Answer: d) INSERT INTO</div>
+</div>
+
+<div class="question">
+    <h3>186. What is the purpose of the SELECT statement in SQL?</h3>
+    <div class="options">
+        <label><input type="radio" name="q186" value="a"> a) To insert new data into a table</label>
+        <label><input type="radio" name="q186" value="b"> b) To retrieve data from a table</label>
+        <label><input type="radio" name="q186" value="c"> c) To delete data from a table</label>
+        <label><input type="radio" name="q186" value="d"> d) To update existing data in a table</label>
+    </div>
+    <div class="answer-box" id="answer186" data-correct-answer="b">Correct Answer: b) To retrieve data from a table</div>
+</div>
+
+<div class="question">
+    <h3>187. To establish a connection within a table inside a database, you need to have the following:</h3>
+    <div class="options">
+        <label><input type="radio" name="q187" value="a"> a) Database name and IP address</label>
+        <label><input type="radio" name="q187" value="b"> b) Port number and password</label>
+        <label><input type="radio" name="q187" value="c"> c) Localhost, username, password, and database name</label>
+        <label><input type="radio" name="q187" value="d"> d) Username and database type</label>
+    </div>
+    <div class="answer-box" id="answer187" data-correct-answer="c">Correct Answer: c) Localhost, username, password, and database name</div>
+</div>
+
+<div class="question">
+    <h3>188. What is the purpose of the WHERE clause in a DELETE statement in MySQL?</h3>
+    <div class="options">
+        <label><input type="radio" name="q188" value="a"> a) To specify the table to delete from</label>
+        <label><input type="radio" name="q188" value="b"> b) To set a condition for updating records</label>
+        <label><input type="radio" name="q188" value="c"> c) To define the conditions under which to delete records</label>
+        <label><input type="radio" name="q188" value="d"> d) To list all columns to be deleted</label>
+    </div>
+    <div class="answer-box" id="answer188" data-correct-answer="c">Correct Answer: c) To define the conditions under which to delete records</div>
+</div>
+
+<div class="question">
+    <h3>189. Which SQL statement is used to create a new database in MySQL within a PHP script?</h3>
+    <div class="options">
+        <label><input type="radio" name="q189" value="a"> a) CREATE DATABASE</label>
+        <label><input type="radio" name="q189" value="b"> b) INSERT INTO</label>
+        <label><input type="radio" name="q189" value="c"> c) CREATE TABLE</label>
+        <label><input type="radio" name="q189" value="d"> d) SELECT DATABASE</label>
+    </div>
+    <div class="answer-box" id="answer189" data-correct-answer="a">Correct Answer: a) CREATE DATABASE</div>
+</div>
+
+<div class="question">
+    <h3>190. To connect an HTML file with PHP, you need to use the following attribute in the form tag:</h3>
+    <div class="options">
+        <label><input type="radio" name="q190" value="a"> a) &lt;form action="submit.php" method="post"&gt;</label>
+        <label><input type="radio" name="q190" value="b"> b) &lt;form method="submit.php" action="get"&gt;</label>
+        <label><input type="radio" name="q190" value="c"> c) &lt;form type="php" action="submit.php"&gt;</label>
+        <label><input type="radio" name="q190" value="d"> d) &lt;form method="connect" type="php"&gt;</label>
+    </div>
+    <div class="answer-box" id="answer190" data-correct-answer="a">Correct Answer: a) &lt;form action="submit.php" method="post"&gt;</div>
+</div>
+
+<div class="question">
+    <h3>191. What can PHP be used for?</h3>
+    <div class="options">
+        <label><input type="radio" name="q191" value="a"> a) Designing user interfaces</label>
+        <label><input type="radio" name="q191" value="b"> b) Creating static web pages</label>
+        <label><input type="radio" name="q191" value="c"> c) Handling form data</label>
+        <label><input type="radio" name="q191" value="d"> d) Managing file systems</label>
+    </div>
+    <div class="answer-box" id="answer191" data-correct-answer="c">Correct Answer: c) Handling form data</div>
+</div>
+
+<div class="question">
+    <h3>192. Which of the following can NOT be a CSS selector?</h3>
+    <div class="options">
+        <label><input type="radio" name="q192" value="a"> a) An HTML element name</label>
+        <label><input type="radio" name="q192" value="b"> b) A class name</label>
+        <label><input type="radio" name="q192" value="c"> c) A CSS rule</label>
+        <label><input type="radio" name="q192" value="d"> d) An id name</label>
+    </div>
+    <div class="answer-box" id="answer192" data-correct-answer="c">Correct Answer: c) A CSS rule</div>
+</div>
+
+<div class="question">
+    <h3>193. You would like to conduct a survey and ask your web page visitors to vote for their favorite search engine. Which of the following form controls is best to use for this purpose?</h3>
+    <div class="options">
+        <label><input type="radio" name="q193" value="a"> a) Check box</label>
+        <label><input type="radio" name="q193" value="b"> b) Text box</label>
+        <label><input type="radio" name="q193" value="c"> c) Radio button</label>
+        <label><input type="radio" name="q193" value="d"> d) Scrolling text box</label>
+    </div>
+    <div class="answer-box" id="answer193" data-correct-answer="c">Correct Answer: c) Radio button</div>
+</div>
+
+<div class="question">
+    <h3>194. The legend element provides a visual group for the fieldset grouping.</h3>
+    <div class="options">
+        <label><input type="radio" name="q194" value="a"> a) True</label>
+	<label><input type="radio" name="q194" value="b"> b) False</label>
+    </div>
+    <div class="answer-box" id="answer194" data-correct-answer="b|The legend element provides a text description for the fieldset grouping.">Correct Answer: b) False</div>
+</div>
+
+<div class="question">
+    <h3>195. What is the default positioning for a background image?</h3>
+    <div class="options">
+        <label><input type="radio" name="q195" value="a"> a) Center</label>
+	<label><input type="radio" name="q195" value="b"> b) Bottom-left</label>
+	<label><input type="radio" name="q195" value="c"> c) Top-left</label>
+	<label><input type="radio" name="q195" value="d"> d) Top-center</label>
+    </div>
+    <div class="answer-box" id="answer195" data-correct-answer="c">Correct Answer: c) Top-left</div>
+</div>
+
+<div class="question">
+    <h3>196. How many mistakes are there in the code below?</h3>
+    <pre>
+        &lt;!DOCTYPE html&gt;
+        &lt;html&gt;
+        &lt;body&gt;
+         &lt;h2&gt;Image Maps&lt;/h2&gt;
+         &lt;p&gt;Click on the computer, the phone, or the cup of coffee to go to a new
+        page and read more about the topic:&lt;/p&gt;
+         &lt;img src="workplace.jpg" usemap="#workmap" width="400" height="379"&gt;
+         &lt;map&gt;
+         &lt;area shape="rect" coords="34,44,270,350" alt="Computer"
+        href="computer.htm"&gt;
+         &lt;area shape="rect" coords="290,172,333,250" alt="Phone" href="phone.htm"&gt;
+         &lt;area shape="circle" coords="337,300,44" alt="Cup of coffee"
+        href="coffee.htm"&gt;
+         &lt;/map&gt;
+        &lt;/body&gt;
+        &lt;/html&gt;
+    </pre>
+    <div class="options">
+        <label><input type="radio" name="q196" value="a"> a) 1</label>
+        <label><input type="radio" name="q196" value="b"> b) 2</label>
+        <label><input type="radio" name="q196" value="c"> c) 3</label>
+        <label><input type="radio" name="q196" value="d"> d) 4</label>
+    </div>
+    <div class="answer-box" id="answer196" data-correct-answer="c|1- missing the < /p > (/) <br> 2- missing alt attribute in img <br> 3- missing attribute in usmap in < map name = 'workmap' > ">Correct Answer: c) 3</div>
+</div>
+
+
+
+    </div>
+    <script>
+        function resetQuiz() {
+            const radioButtons = document.querySelectorAll('input[type="radio"]');
+            radioButtons.forEach(radio => radio.checked = false);
+
+            const answerBoxes = document.querySelectorAll('.answer-box');
+            answerBoxes.forEach(box => {
+                box.style.display = 'none';
+                box.classList.remove('correct', 'incorrect');
+                const correctAnswer = box.getAttribute('data-correct-answer');
+                if (correctAnswer) {
+                    box.textContent = `Correct Answer: ${box.dataset.correctAnswer}`;
+                }
+            });
+        }
+
+        function showAllAnswers() {
+    const answerBoxes = document.querySelectorAll('.answer-box');
+    answerBoxes.forEach(box => {
+        const [correctAnswer, explanation] = box.dataset.correctAnswer.split('|');
+        box.innerHTML = `Correct Answer: ${correctAnswer}${explanation ? `<br>${explanation}` : ''}`;
+        box.style.display = 'block';
+        box.classList.add('correct');
+    });
+}
+
+	function validateMultipleChoice(questionNumber) {
+    const checkboxes = document.querySelectorAll(`input[name="q${questionNumber}"]:checked`);
+    const selectedValues = Array.from(checkboxes).map(cb => cb.value).sort().join(",");
+    const answerBox = document.getElementById(`answer${questionNumber}`);
+    const correctAnswers = answerBox.dataset.correctAnswer.split(",").sort().join(",");
+
+    // Get the required number of correct answers
+    const requiredSelections = answerBox.dataset.correctAnswer.split(",").length;
+
+    // Only show result if the user has selected the required number of options
+    if (checkboxes.length >= requiredSelections) {
+        if (selectedValues === correctAnswers) {
+            answerBox.textContent = "Correct!";
+            answerBox.classList.add("correct");
+            answerBox.classList.remove("incorrect");
+        } else {
+            answerBox.textContent = `Incorrect. Correct Answers: ${answerBox.dataset.correctAnswer}`;
+            answerBox.classList.add("incorrect");
+            answerBox.classList.remove("correct");
+        }
+        answerBox.style.display = "block";
+    } else {
+        answerBox.style.display = "none"; // Hide answer box until enough choices are made
+    }
+}
+
+// Attach event listener to all checkboxes
+document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+    checkbox.addEventListener("change", (e) => {
+        const questionNumber = e.target.name.substring(1);
+        validateMultipleChoice(questionNumber);
+    });
+});
+
+
+
+        function hideAllAnswers() {
+            const answerBoxes = document.querySelectorAll('.answer-box');
+            answerBoxes.forEach(box => {
+                box.style.display = 'none';
+                box.classList.remove('correct', 'incorrect');
+            });
+        }
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function scrollToBottom() {
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
+
+        const radioButtons = document.querySelectorAll('input[type="radio"]');
+radioButtons.forEach(radio => {
+    radio.addEventListener('change', (e) => {
+        const questionNumber = e.target.name.substring(1);
+        const answerBox = document.getElementById(`answer${questionNumber}`);
+        const correctAnswerValue = answerBox.getAttribute('data-correct-answer');
+        const [correctAnswer, explanation] = correctAnswerValue.split('|');
+        const userAnswer = e.target.value;
+
+        if (userAnswer === correctAnswer) {
+            answerBox.innerHTML = `Correct!<br>${explanation || ''}`;
+            answerBox.classList.add('correct');
+            answerBox.classList.remove('incorrect');
+        } else {
+            answerBox.innerHTML = `Incorrect. Correct Answer: ${correctAnswer}${explanation ? `<br>${explanation}` : ''}`;
+            answerBox.classList.add('incorrect');
+            answerBox.classList.remove('correct');
+        }
+        answerBox.style.display = 'block';
+    });
+});
+    </script>
+</body>
+</html>
